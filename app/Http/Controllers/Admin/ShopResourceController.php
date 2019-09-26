@@ -10,13 +10,13 @@ use App\Services\AmapService;
 use App\Repositories\Eloquent\ShopRepositoryInterface;
 
 /**
- * Resource controller class for region.
+ * Resource controller class for shop.
  */
 class ShopResourceController extends BaseController
 {
 
     /**
-     * Initialize region resource controller.
+     * Initialize shop resource controller.
      *
      * @param type ShopRepositoryInterface $shop
      */
@@ -68,6 +68,35 @@ class ShopResourceController extends BaseController
         return $this->response->title(trans('app.admin.panel'))
             ->view('shop.'.$status)
             ->data(compact('status'))
+            ->output();
+    }
+    public function index(Request $request){
+        $limit = $request->input('limit',config('app.limit'));
+        $search = $request->input('search',[]);
+        $search_name = isset($search['name']) ? $search['name'] : '';
+
+        if ($this->response->typeIs('json')) {
+            $shops = $this->repository;
+
+            if(!empty($search_name))
+            {
+                $shops = $shops->where(function ($query) use ($search_name){
+                    return $query->where('name','like','%'.$search_name.'%');
+                });
+            }
+
+            $shops = $shops->orderBy('id','desc')
+                ->paginate($limit);
+
+            return $this->response
+                ->success()
+                ->count($shops->total())
+                ->data($shops->toArray()['data'])
+                ->output();
+
+        }
+        return $this->response->title(trans('app.name'))
+            ->view('shop.index')
             ->output();
     }
     public function create(Request $request)
@@ -122,5 +151,18 @@ class ShopResourceController extends BaseController
                 ->redirect();
         }
 
+    }
+
+    public function show(Request $request,Shop $shop)
+    {
+        if ($shop->exists) {
+            $view = 'shop.show';
+        } else {
+            $view = 'shop.new';
+        }
+        return $this->response->title(trans('app.view') . ' ' . trans('shop.name'))
+            ->data(compact('shop'))
+            ->view($view)
+            ->output();
     }
 }

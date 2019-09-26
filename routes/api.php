@@ -21,7 +21,6 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
     $api->get('/','App\Http\Controllers\Api\HomeController@index');
-    $api->post('login', 'App\Http\Controllers\Api\Auth\LoginController@login');
     $api->post('register', 'App\Http\Controllers\Api\Auth\RegisterController@register');
     $api->get('/page','App\Http\Controllers\Api\PageController@getPages');
     $api->get('/page/{id}','App\Http\Controllers\Api\PageController@getPage');
@@ -35,4 +34,8 @@ $api->version('v1', function ($api) {
     $api->post('test','App\Http\Controllers\Api\HomeController@test');
     $api->get('/link','App\Http\Controllers\Api\LinkController@getLinks');
     $api->get('/videoVid','App\Http\Controllers\Api\HomeController@getVideoVid');
+
+    $api->post('login', 'App\Http\Controllers\Api\Auth\LoginController@login');
+    $api->post('/change_password','App\Http\Controllers\Api\UserController@changePassword');
+
 });

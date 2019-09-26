@@ -11,9 +11,9 @@ trait ExceptionCustomHandler
         switch ($exception) {
             case ($exception instanceof \App\Exceptions\RequestSuccessException):
                 $responseJson = [
-                    'code' => 200,
+                    'code' => 0,
                     'status' => 'success',
-                    'message' => sprintf(config('error.200'), $exception->getMessage() ?: '请求成功'),
+                    'message' => $exception->getMessage() ? $exception->getMessage() : '请求成功',
                 ];
                 break;
             case ($exception instanceof \App\Exceptions\OutputServerMessageException):

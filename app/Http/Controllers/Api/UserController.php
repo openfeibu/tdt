@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Repositories\Eloquent\PageRepositoryInterface;
+use App\Exceptions\OutputServerMessageException;
+use App\Exceptions\RequestSuccessException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\BaseController;
-use App\Models\Banner;
 use App\Models\User;
 use App\Services\WXBizDataCryptService;
 use App\Services\AmapService;
-use Log;
+use Illuminate\Support\Facades\Validator;
+use Route,Auth,Hash,Input,Log,Image,File;
 
 class UserController extends BaseController
 {
@@ -77,5 +78,39 @@ class UserController extends BaseController
             'message' => '提交成功',
             'data' => $data['regeocode']['addressComponent']['city'],
         ]);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = User::getUser();
+
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'password'     => 'required|confirmed|min:6',
+        ],[
+            'old_password.required' => '旧密码不能为空',
+            'password.required' => '新密码不能为空',
+            'password.confirmed' => '重复新密码不正确',
+            'password.min' => '密码最少六位',
+        ]);
+        if ($validator->fails()) {
+            throw new OutputServerMessageException($validator->errors()->first());
+        }
+        $user->password = User::where('id',$user->id)->value('password');
+        if (!Hash::check($request->get('old_password'), $user->password)) {
+            throw new OutputServerMessageException('旧密码错误');
+        }
+
+        $password = $request->get('password');
+
+        $user->password = bcrypt($password);
+
+        $update = User::where('id',$user->id)->update(['password' => bcrypt($password)]);
+
+        if ($update) {
+            throw new RequestSuccessException("修改成功");
+        } else {
+            throw new OutputServerMessageException('服务器出错了');
+        }
     }
 }

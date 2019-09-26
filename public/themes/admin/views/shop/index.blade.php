@@ -13,7 +13,7 @@
                     <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
                 </div>
                 <div class="layui-inline">
-                   <input class="layui-input search_key" name="shop_name" placeholder="门店名称" autocomplete="off">
+                   <input class="layui-input search_key" name="name" placeholder="门店名称" autocomplete="off">
                 </div>
                 <button class="layui-btn" data-type="reload">搜索</button>
             </div>
@@ -44,14 +44,20 @@
             ,cols: [[
                 {checkbox: true, fixed: true}
                 ,{field:'id',title:'ID', width:80, sort: true}
-                ,{field:'shop_name',title:'{{ trans('shop.label.shop_name') }}'}
-                ,{field:'image',title:'{{ trans('shop.label.image') }}',toolbar:'#imageTEM'}
+                ,{field:'name',title:'{{ trans('shop.label.name') }}'}
+                //,{field:'image',title:'{{ trans('shop.label.image') }}',toolbar:'#imageTEM'}
                 ,{field:'address',title:'{{ trans('shop.label.address') }}'}
-                ,{field:'business_time',title:'{{ trans('shop.label.business_time') }}'}
-                ,{field:'city_name',title:'{{ trans('shop.label.city_name') }}'}
-                ,{field:'view_count',title:'{{ trans('shop.label.view_count') }}'}
-                ,{field:'created_at',title:'{{ trans('app.created_at') }}'}
-                ,{field:'score',title:'操作', width:200, align: 'right',toolbar:'#barDemo'}
+                ,{field:'leader',title:'{{ trans('shop.label.leader') }}'}
+                ,{field:'mobile',title:'{{ trans('shop.label.mobile') }}'}
+                ,{field:'inviter',title:'{{ trans('shop.label.inviter') }}'}
+                ,{field:'first',title:'{{ trans('shop.label.first') }}',width:60}
+                ,{field:'signer',title:'{{ trans('shop.label.signer') }}'}
+                ,{field:'cooperation_date',title:'{{ trans('shop.label.cooperation_date') }}'}
+                ,{field:'is_full_desc',title:'{{ trans('shop.label.is_full') }}'}
+                ,{field:'contract_date',title:'{{ trans('shop.label.contract_date') }}'}
+                ,{field:'status_desc',title:'{{ trans('shop.label.status') }}'}
+                //,{field:'created_at',title:'{{ trans('app.created_at') }}'}
+                ,{field:'score',title:'操作', width:150, align: 'right',toolbar:'#barDemo'}
             ]]
             ,id: 'fb-table'
             ,page: true
