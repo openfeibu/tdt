@@ -108,7 +108,7 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'limit' => 10,
+    'limit' => 20,
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -177,6 +177,7 @@ return [
         HieuLe\Active\ActiveServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
         Jrean\UserVerification\UserVerificationServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         //Teepluss\Theme\ThemeServiceProvider::class,
     ],
 
@@ -244,6 +245,7 @@ return [
         'Active' => HieuLe\Active\Facades\Active::class,
         'Agent' => Jenssegers\Agent\Facades\Agent::class,
         'UserVerification' => Jrean\UserVerification\Facades\UserVerification::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
     'allow_origin' =>[
         'http://192.168.0.3:1818',

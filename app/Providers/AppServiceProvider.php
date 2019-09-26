@@ -61,6 +61,26 @@ class AppServiceProvider extends ServiceProvider
             'App\Repositories\Eloquent\NavCategoryRepositoryInterface',
             \App\Repositories\Eloquent\NavCategoryRepository::class
         );
+        $this->app->bind(
+            'App\Repositories\Eloquent\UserRepositoryInterface',
+            \App\Repositories\Eloquent\UserRepository::class
+        );
+        $this->app->bind(
+            'App\Repositories\Eloquent\RegionRepositoryInterface',
+            \App\Repositories\Eloquent\RegionRepository::class
+        );
+        $this->app->bind(
+            'App\Repositories\Eloquent\AreaRepositoryInterface',
+            \App\Repositories\Eloquent\AreaRepository::class
+        );
+        $this->app->bind(
+            'App\Repositories\Eloquent\ShopRepositoryInterface',
+            \App\Repositories\Eloquent\ShopRepository::class
+        );
+        $this->app->bind('area_repository', function ($app) {
+            return new \App\Repositories\Eloquent\AreaRepository($app);
+        });
+
         $this->app->bind('filer', function ($app) {
             return new \App\Helpers\Filer\Filer();
         });

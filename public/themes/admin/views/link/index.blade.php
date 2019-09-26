@@ -49,7 +49,7 @@
             ]]
             ,id: 'fb-table'
             ,page: true
-            ,limit: 10
+            ,limit: 20
             ,height: 'full-200'
         });
 

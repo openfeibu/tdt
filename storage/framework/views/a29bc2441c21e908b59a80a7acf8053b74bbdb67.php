@@ -8,7 +8,7 @@
     <meta name="screen-orientation" content="portrait">
     <meta name="x5-orientation" content="portrait">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-    <title><?php echo Theme::getTitle(); ?> :: <?php echo e(trans('app.name')); ?></title>
+    <title><?php echo e(trans('app.name')); ?></title>
     <?php echo Theme::asset()->styles(); ?>
 
     

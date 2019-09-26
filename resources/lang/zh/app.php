@@ -11,7 +11,7 @@ return [
     |
      */
 
-    'name'           => '后台管理系统',
+    'name'           => '头道汤区域保护',
     'name.html'      => '<b>Lava</b>lite',
     'name.short'     => '<b>L</b>l',
     'admin.panel'    => '管理面板',

@@ -44,12 +44,6 @@ Route::group([
     Route::resource('permission', 'PermissionResourceController');
     Route::resource('role', 'RoleResourceController');
 
-    Route::group(['prefix' => 'case','as' => 'case.'], function ($router) {
-        Route::resource('case', 'CaseResourceController');
-        Route::post('/case/destroyAll', 'CaseResourceController@destroyAll')->name('case.destroy_all');
-        Route::resource('category', 'CaseCategoryResourceController');
-        Route::post('/category/destroyAll', 'CaseCategoryResourceController@destroyAll')->name('category.destroy_all');
-    });
 
     Route::group(['prefix' => 'page','as' => 'page.'], function ($router) {
         Route::resource('page', 'PageResourceController');
@@ -75,6 +69,15 @@ Route::group([
     Route::resource('role', 'RoleResourceController');
     Route::post('/role/destroyAll', 'RoleResourceController@destroyAll')->name('role.destroy_all');
     Route::get('logout', 'Auth\LoginController@logout');
+
+    Route::resource('user', 'UserResourceController');
+    Route::post('/user/destroyAll', 'UserResourceController@destroyAll')->name('user.destroy_all');
+
+    Route::resource('region', 'RegionResourceController');
+    Route::post('/region/destroyAll', 'RegionResourceController@destroyAll')->name('region.destroy_all');
+
+    Route::resource('shop', 'ShopResourceController');
+    Route::post('/shop/destroyAll', 'ShopResourceController@destroyAll')->name('shop.destroy_all');
 });
 Route::group([
     'namespace' => 'Pc',
