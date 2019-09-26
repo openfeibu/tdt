@@ -22,6 +22,7 @@ $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
     $api->get('/','App\Http\Controllers\Api\HomeController@index');
     $api->post('register', 'App\Http\Controllers\Api\Auth\RegisterController@register');
+
     $api->get('/page','App\Http\Controllers\Api\PageController@getPages');
     $api->get('/page/{id}','App\Http\Controllers\Api\PageController@getPage');
     $api->get('/page/slug/{slug}','App\Http\Controllers\Api\PageController@getPageSlug');
@@ -37,5 +38,5 @@ $api->version('v1', function ($api) {
 
     $api->post('login', 'App\Http\Controllers\Api\Auth\LoginController@login');
     $api->post('/change_password','App\Http\Controllers\Api\UserController@changePassword');
-
+    $api->get('get_location', 'App\Http\Controllers\Api\HomeController@getLocation');
 });

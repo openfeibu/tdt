@@ -78,6 +78,8 @@ Route::group([
 
     Route::resource('shop', 'ShopResourceController');
     Route::post('/shop/destroyAll', 'ShopResourceController@destroyAll')->name('shop.destroy_all');
+    Route::get('shop_import', 'ShopResourceController@import')->name('shop.import');
+    Route::post('/shop_submit_import', 'ProviderResourceController@submitImport')->name('shop.submit_import');
 });
 Route::group([
     'namespace' => 'Pc',

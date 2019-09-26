@@ -26,5 +26,15 @@ class AmapService
 
         return $data;
     }
+    public function geocode_geo($address,$batch="false")
+    {
+        $url = "https://restapi.amap.com/v3/geocode/geo?key=".$this->key."&address=".$address."&batch=".$batch.'&output=JSON';
+
+        $res = $this->client->get($url);
+        $data = json_decode($res->getBody()->getContents(),true);
+
+        return $data;
+    }
+
 
 }

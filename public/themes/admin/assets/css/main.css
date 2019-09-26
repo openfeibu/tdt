@@ -126,7 +126,133 @@ button.layui-close{
 
 
 
+.order-des{
 
+}
+.order-des .layui-form-item{
+    margin:2px 0 !important;
+}
+.order-des .layui-form-item .layui-form-label{
+    width:180px;
+    color:#999;
+    margin-right:20px;
+}
+.order-des .layui-form-item ul li{
+    width:20% !important;
+    margin-right:1%;
+    margin-left:0 !important
+}
+.order-des .layui-form-item ul li img{width:100%;cursor:pointer}
+
+
+.input-file{
+    display:inline-block;*display:inline;
+    position:relative;
+    height: 38px;
+    line-height: 38px;
+    padding: 0 18px;
+    background-color: #1E9FFF;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 14px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.input-file input{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    opacity:0;
+}
+.fileText{
+    margin-right:20px;
+}
+.mt20{
+    margin-top:20px;
+}
+.mt10{
+    margin-top:10px;
+}
+.provider_content .layui-form{
+    padding:10px 5px;
+    min-height:210px;
+    background:#eee;
+    border-radius:5px;
+    margin:5px 10px;
+
+}
+.provider_content .layui-form .layui-form-radio{
+    width:28%;
+    margin: 5px 1% !important
+
+}
+.layui_open_content .layui-form{
+    padding:10px 5px;
+    min-height:210px;
+    background:#eee;
+    border-radius:5px;
+    margin:5px 10px;
+
+}
+.layui_open_content .layui-form .layui-form-radio{
+    width:28%;
+    margin: 5px 1% !important
+
+}
+.dataBox li{
+    margin-top:10px
+}
+.main_full .fb-main-table{
+    border:none;
+    border-radius:5px;
+}
+.order_search .layui-form-label{text-align:left;padding:0;height:38px;line-height:38px;width:auto;}
+.order_search .layui-input-inline{margin-right:0}
+.order_search .layui-input-search{width:190px}
+.order_search .layui-inline{margin-bottom:0;margin-right:5px}
+button[data-type="del"]{
+    background:#FF5722;
+    color:#fff;
+}
+button[data-type="del"]:hover{color:#fff;}
+.range90{
+    transform: rotate(-90deg);
+    -ms-transform:rotate(-90deg);
+    -o-transform:rotate(-90deg);
+    -webkit-transform:rotate(-90deg);
+}
+.layui-elem-field legend{
+    font-size:16px;
+    color:#1E9FFF;
+    font-weight:bold;
+}
+.layui-btn-box{
+    text-align:center;
+    padding:20px 0;
+}
+.layui-btn-box a{margin:0 20px;}
+.user_content .layui-form{
+    padding:10px 5px;
+    min-height:210px;
+    background:#eee;
+    border-radius:5px;
+    margin:5px 10px;
+
+}
+.user_content .layui-form .layui-form-radio{
+    width:100%;
+
+
+}
+.des_content{
+    display:block;
+    font-size:14px;
+    line-height:40px;
+}
 
 
 

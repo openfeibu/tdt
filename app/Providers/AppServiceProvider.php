@@ -87,6 +87,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('image', function ($app) {
             return new ImageManager($app['config']->get('image'));
         });
+        $this->app->bind('image_service', function ($app) {
+            return new \App\Services\ImageService($app->request);
+        });
+        $this->app->bind('excel_service', function ($app) {
+            return new \App\Services\ExcelService($app->request);
+        });
     }
 
     public function provides()
