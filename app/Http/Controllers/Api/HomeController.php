@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\OutputServerMessageException;
 use App\Repositories\Eloquent\PageRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\BaseController;
@@ -25,6 +26,10 @@ class HomeController extends BaseController
         $address = $request->address;
         $amap_service = new AmapService();
         $map_data = $amap_service->geocode_geo($address);
+        if(!isset($map_data['geocodes'][0]))
+        {
+            throw new OutputServerMessageException("请输入正确地址");
+        }
         $location = $map_data['geocodes'][0]['location'];
         $location_arr = explode(',',$location);
         return $this->response->success()->data([
