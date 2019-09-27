@@ -57,7 +57,7 @@
     <div class="fb-error-con">
         <p>如有任何建议，请及时反馈给 <a href="http://www.feibu.info">广州飞步信息科技有限公司</a></p>
     </div>
-    <div class="fb-error-button"><a id="href" @if($url) href="{{ $url }}" @else href="javascript:history.back();" @endif >返回上一页(<span id="wait">5</span>s)</a></div>
+    <div class="fb-error-button"><a id="href" @if(isset($url) && $url)  href="{{ $url }}" @else href="javascript:history.back();" @endif >返回上一页(<span id="wait">5</span>s)</a></div>
 
 </div>
 

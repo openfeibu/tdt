@@ -137,7 +137,6 @@ class ShopResourceController extends BaseController
         $adcode = $map_data['regeocode']['addressComponent']['adcode'];
         $district_name = $map_data['regeocode']['addressComponent']['district'];
         $towncode = $map_data['regeocode']['addressComponent']['towncode'];
-        $province_name = $map_data['regeocode']['addressComponent']['province'];
 
         $district = app('area_repository')->where('code',$adcode)->first();
         $city = app('area_repository')->where('code',$district->parent_code)->first();
@@ -223,41 +222,44 @@ class ShopResourceController extends BaseController
         $success_count = 0;
         $empty_count = 0;
         $excel_data = [];
+
         foreach ( $res as $k => $v ) {
-            $excel_data[$k] = [
-                'name' => isset($v['店名']) ? trim($v['店名']) : '',
-                'linkman' => isset($v['负责人']) ? trim($v['负责人']) : '',
-                'mobile' => isset($v['电话']) ? trim($v['电话']) : '',
-                'inviter' => isset($v['邀约人']) ? trim($v['邀约人']) : '',
-                'first' => isset($v['首次']) ? trim($v['首次']) : '',
-                'signer' => isset($v['签单']) ? trim($v['签单']) : '',
-                'address' => isset($v['销售区域（门店地址）']) ? trim($v['销售区域（门店地址）']) : '',
-                'cooperation_date' => isset($v['合作时间']) ? trim($v['合作时间']) : '',
-                'is_full' => isset($v['全款']) ? trim($v['全款']) : '',
-                'status' => isset($v['备注']) ? trim($v['备注']) : '',
-                'contract_date' => isset($v['合同签约']) ? trim($v['合同签约']) : '',
-            ];
-            if($excel_data[$k]['address'])
+            if($k == 0)
             {
-                $map_data = $this->amap_service->geocode_geo($excel_data[$k]['address']);
-                $provider = Provider::where('name',$excel_data[$k]['name'])->first();
-                if(!$provider)
+                $head_key_arr = ['name' => '店名' ,'leader' => '负责人','mobile' => '电话','inviter' => '邀约人','first' => '首次','signer' => '签单','address' => '销售区域（门店地址）','cooperation_date' => '合作时间','is_full' => '全款','status' => '备注','contract_date' => '合同签约'];
+                $keys = [];
+                foreach ($v as $head_k => $head_v)
                 {
-                    $success_count++;
-                    $provider = Provider::create($excel_data[$k]);
-                    $phone = ProviderUser::where('phone',$excel_data[$k]['phone'])->value('id');
-                    if(!$phone && $provider)
+                    if(in_array(trim($head_v),array_values($head_key_arr)))
                     {
-                        $provider_user = ProviderUser::create([
-                            'phone' => $excel_data[$k]['phone'],
-                            'name' => $excel_data[$k]['name'],
-                            'provider_id' => $provider->id,
-                            'password' => '123456'
-                        ]);
-                        $role_id = ProviderRole::where('slug','superuser')->value('id');
-                        $provider_user->roles()->sync([$role_id]);
+                        $keys[array_search(trim($head_v),$head_key_arr)] = $head_k;
                     }
                 }
+                continue;
+            }
+
+            foreach ($head_key_arr as $data_field => $data_value)
+            {
+                $attributes[$data_field] = $excel_data[$k][$data_field]  = isset($keys[$data_field]) && isset($v[$keys[$data_field]]) ? $v[$keys[$data_field]] : '';
+            }
+            if($attributes['address'])
+            {
+                $attributes['name'] = $attributes['name'] ? $attributes['name'] : '头道汤';
+                if($attributes['is_full'] != "是")
+                {
+                    $attributes['price'] = $attributes['is_full'];
+                    $attributes['is_full'] = 0;
+                }else{
+                    $attributes['is_full'] = 1;
+                }
+                $map_data = $this->amap_service->geocode_geo($excel_data[$k]['address']);
+                $location = $map_data['geocodes'][0]['location'];
+                $location_arr = explode(',',$location);
+                $attributes['longitude'] = $location_arr[0];
+                $attributes['latitude'] = $location_arr[1];
+var_dump($attributes);exit;
+                $this->submitShop($attributes);
+                $success_count++;
             }else{
                 $empty_count++;
                 if($empty_count >=3)

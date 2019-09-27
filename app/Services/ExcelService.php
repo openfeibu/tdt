@@ -7,6 +7,7 @@ use File;
 use Session;
 use Storage;
 use Excel;
+use App\Import\DemoImport;
 use Illuminate\Http\Request;
 
 class ExcelService
@@ -18,6 +19,7 @@ class ExcelService
         $this->request = $request;
         $this->upload_folder = '/uploads/excel/';
     }
+    /*
     public function uploadExcel()
     {
         $file = $this->request->file;
@@ -37,6 +39,9 @@ class ExcelService
         $excel_file_path = storage_path('uploads') .DIRECTORY_SEPARATOR. 'excel'.DIRECTORY_SEPARATOR. $filename;
 
         $res = [];
+
+        $res = (new DemoImport)->toArray($excel_file_path)[0];
+
         Excel::load($excel_file_path, function($reader) use (&$res) {
 
             $res = $reader->all()->toArray();
@@ -45,4 +50,16 @@ class ExcelService
 
         return $res;
     }
+    */
+    public function uploadExcel()
+    {
+        $file = $this->request->file;
+
+        isVaildExcel($file);
+
+        $res = (new DemoImport)->toArray($file)[0];
+
+        return $res;
+    }
+
 }

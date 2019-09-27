@@ -20,7 +20,7 @@ class HomeController extends BaseController
             ->pushCriteria(\App\Repositories\Criteria\RequestCriteria::class)
             ->pushCriteria(\App\Repositories\Criteria\PageResourceCriteria::class);
     }
-    public function getLocation(Request $request)
+    public function getCoordinates(Request $request)
     {
         $address = $request->address;
         $amap_service = new AmapService();
@@ -31,6 +31,6 @@ class HomeController extends BaseController
             'longitude' => $location_arr[0],
             'latitude' => $location_arr[1],
         ])->json();
-
     }
+
 }
