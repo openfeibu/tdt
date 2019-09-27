@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\OutputServerMessageException;
 use App\Repositories\Eloquent\PageRepositoryInterface;
+use App\Services\LBSService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\BaseController;
 use App\Models\Banner;
@@ -24,17 +25,18 @@ class HomeController extends BaseController
     public function getCoordinates(Request $request)
     {
         $address = $request->address;
-        $amap_service = new AmapService();
-        $map_data = $amap_service->geocode_geo($address);
-        if(!isset($map_data['geocodes'][0]))
+        $lbs_service = new LBSService();
+        $map_data = $lbs_service->geocode_geo($address);
+
+        if(!isset($map_data['result']))
         {
             throw new OutputServerMessageException("请输入正确地址");
         }
-        $location = $map_data['geocodes'][0]['location'];
-        $location_arr = explode(',',$location);
+        $location = $map_data['result']['location'];
+
         return $this->response->success()->data([
-            'longitude' => $location_arr[0],
-            'latitude' => $location_arr[1],
+            'longitude' => $location['lng'],
+            'latitude' => $location['lat'],
         ])->json();
     }
 

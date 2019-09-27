@@ -257,7 +257,7 @@ class ShopResourceController extends BaseController
                 $location_arr = explode(',',$location);
                 $attributes['longitude'] = $location_arr[0];
                 $attributes['latitude'] = $location_arr[1];
-var_dump($attributes);exit;
+
                 $this->submitShop($attributes);
                 $success_count++;
             }else{
@@ -271,8 +271,7 @@ var_dump($attributes);exit;
 
         return $this->response->message("共发现".$count."条数据，排除空数据后共成功上传".$success_count."条")
             ->status("success")
-            ->code(200)
-            ->url(guard_url('provider'))
+            ->url(guard_url('shop'))
             ->redirect();
 
     }
