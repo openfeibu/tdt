@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Models\Shop;
 use App\Services\AmapService;
+use App\Services\LBSService;
 use App\Repositories\Eloquent\ShopRepositoryInterface;
 
 /**
@@ -30,6 +31,8 @@ class ShopResourceController extends BaseController
         $this->repository
             ->pushCriteria(\App\Repositories\Criteria\RequestCriteria::class);
         $this->amap_service = new AmapService();
+        $this->lbs_service = new LBSService();
+        $this->lbs_service->debug = true;
     }
     public function normalShopList(Request $request)
     {
@@ -132,11 +135,11 @@ class ShopResourceController extends BaseController
     }
     public function submitShop($attributes)
     {
-        $map_data = $this->amap_service->geocode_regeo($attributes['longitude'].','.$attributes['latitude']);
+        $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
 
-        $adcode = $map_data['regeocode']['addressComponent']['adcode'];
-        $district_name = $map_data['regeocode']['addressComponent']['district'];
-        $towncode = $map_data['regeocode']['addressComponent']['towncode'];
+        $adcode = $map_data['result']['ad_info']['adcode'];
+        $district_name = $map_data['result']['address_component']['district'];
+        $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
 
         $district = app('area_repository')->where('code',$adcode)->first();
         $city = app('area_repository')->where('code',$district->parent_code)->first();
@@ -172,12 +175,11 @@ class ShopResourceController extends BaseController
         try {
             $attributes = $request->all();
 
-            $map_data = $this->amap_service->geocode_regeo($attributes['longitude'].','.$attributes['latitude']);
+            $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
 
-            $adcode = $map_data['regeocode']['addressComponent']['adcode'];
-            $district_name = $map_data['regeocode']['addressComponent']['district'];
-            $towncode = $map_data['regeocode']['addressComponent']['towncode'];
-            //$province_name = $map_data['regeocode']['addressComponent']['province'];
+            $adcode = $map_data['result']['ad_info']['adcode'];
+            $district_name = $map_data['result']['address_component']['district'];
+            $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
 
             $district = app('area_repository')->where('code',$adcode)->first();
             $city = app('area_repository')->where('code',$district->parent_code)->first();
@@ -218,11 +220,11 @@ class ShopResourceController extends BaseController
     {
         set_time_limit(0);
         $res = app('excel_service')->uploadExcel();
-        $count = count($res);
+        $count = count($res) - 1;
         $success_count = 0;
         $empty_count = 0;
         $excel_data = [];
-
+        $error_message = "";
         foreach ( $res as $k => $v ) {
             if($k == 0)
             {
@@ -240,7 +242,7 @@ class ShopResourceController extends BaseController
 
             foreach ($head_key_arr as $data_field => $data_value)
             {
-                $attributes[$data_field] = $excel_data[$k][$data_field]  = isset($keys[$data_field]) && isset($v[$keys[$data_field]]) ? $v[$keys[$data_field]] : '';
+                $attributes[$data_field] = $excel_data[$k][$data_field]  = isset($keys[$data_field]) && isset($v[$keys[$data_field]]) ? trim($v[$keys[$data_field]]) : '';
             }
             if($attributes['address'])
             {
@@ -252,11 +254,18 @@ class ShopResourceController extends BaseController
                 }else{
                     $attributes['is_full'] = 1;
                 }
-                $map_data = $this->amap_service->geocode_geo($excel_data[$k]['address']);
-                $location = $map_data['geocodes'][0]['location'];
-                $location_arr = explode(',',$location);
-                $attributes['longitude'] = $location_arr[0];
-                $attributes['latitude'] = $location_arr[1];
+                $status_arr = trans('shop.status');
+                $attributes['status'] = array_search($attributes['status'],$status_arr);
+                $map_data = $this->lbs_service->geocode_geo($excel_data[$k]['address']);
+                if(isset($map_data['error']) && $map_data['error'])
+                {
+                    $error_message .= "\n第".$k."行地理位置无法识别;";
+                    continue;
+                }
+                $location = $map_data['result']['location'];
+
+                $attributes['longitude'] = $location['lng'];
+                $attributes['latitude'] = $location['lat'];
 
                 $this->submitShop($attributes);
                 $success_count++;
@@ -269,11 +278,64 @@ class ShopResourceController extends BaseController
             }
         }
 
-        return $this->response->message("共发现".$count."条数据，排除空数据后共成功上传".$success_count."条")
+        return $this->response->message("共发现".$count."条数据，排除空数据及重复数据后共成功上传".$success_count."条;".$error_message)
             ->status("success")
             ->url(guard_url('shop'))
             ->redirect();
 
     }
+    /**
+     * @param Request $request
+     * @param Shop $shop
+     * @return mixed
+     */
+    public function destroy(Request $request, Shop $shop)
+    {
+        try {
+            $shop->forceDelete();
+            return $this->response->message(trans('messages.success.deleted', ['Module' => trans('shop.name')]))
+                ->code(202)
+                ->status('success')
+                ->url(guard_url('shop'))
+                ->redirect();
 
+        } catch (Exception $e) {
+
+            return $this->response->message($e->getMessage())
+                ->code(400)
+                ->status('error')
+                ->url(guard_url('shop'))
+                ->redirect();
+        }
+
+    }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function destroyAll(Request $request)
+    {
+        try {
+
+            $data = $request->all();
+            $ids = $data['ids'];
+
+            $this->repository->forceDelete($ids);
+
+            return $this->response->message(trans('messages.success.deleted', ['Module' => trans('shop.name')]))
+                ->status("success")
+                ->code(202)
+                ->url(guard_url('shop'))
+                ->redirect();
+
+        } catch (Exception $e) {
+
+            return $this->response->message($e->getMessage())
+                ->status("error")
+                ->code(400)
+                ->url(guard_url('shop'))
+                ->redirect();
+        }
+    }
 }

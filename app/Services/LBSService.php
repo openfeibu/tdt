@@ -6,11 +6,15 @@ use App\Exceptions\OutputServerMessageException;
 
 class LBSService
 {
+    public $debug;
+
     public function __construct()
     {
         $this->key = config('lbs.web_key');
 
         $this->client = new Client();
+
+        $this->debug = false;
     }
     public function geocode_regeo($lng,$lat)
     {
@@ -20,6 +24,11 @@ class LBSService
 
         if($data['status'])
         {
+            if($this->debug)
+            {
+                $data['error'] = 1;
+                return $data;
+            }
             throw new \App\Exceptions\OutputServerMessageException($data['message']);
         }
 
@@ -33,6 +42,11 @@ class LBSService
 
         if($data['status'])
         {
+            if($this->debug)
+            {
+                $data['error'] = 1;
+                return $data;
+            }
             throw new \App\Exceptions\OutputServerMessageException($data['message']);
         }
 
