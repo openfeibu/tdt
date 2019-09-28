@@ -78,7 +78,7 @@ class ShopController extends BaseController
             'site' => $site,
             'km' => $km,
             'shops' => $shops
-        ])->json();
+        ])->count(count($shops))->json();
 
     }
 }
