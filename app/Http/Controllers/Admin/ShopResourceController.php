@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\ResourceController as BaseController;
 use App\Models\Area;
+use App\Models\Signer;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Shop;
@@ -34,6 +35,10 @@ class ShopResourceController extends BaseController
         $this->lbs_service = new LBSService();
         $this->lbs_service->debug = true;
     }
+    public function index(Request $request){
+        return $this->shopList($request,"all");
+    }
+
     public function normalShopList(Request $request)
     {
         return $this->shopList($request,"normal");
@@ -45,18 +50,31 @@ class ShopResourceController extends BaseController
         $search = $request->input('search',[]);
         $search_name = isset($search['name']) ? $search['name'] : '';
         $search_inviter = isset($search['inviter']) ? $search['inviter'] : '';
+        $search_signer = isset($search['signer']) ? $search['signer'] : '';
+        $signers = Signer::get()->toArray();
         if ($this->response->typeIs('json')) {
-            $shops = $this->repository->where('status',$status);
+            $shops = $this->repository;
+            if($status != 'all')
+            {
+                $shops = $shops->where('status',$status);
+            }
+
             if($search_name)
             {
                 $shops = $shops->where(function ($query) use ($search_name){
                     return $query->where('name','like','%'.$search_name.'%');
                 });
             }
+            if($search_signer)
+            {
+                $shops = $shops->where(function ($query) use ($search_signer){
+                    return $query->where('signer',$search_signer);
+                });
+            }
             if($search_inviter)
             {
                 $shops = $shops->where(function ($query) use ($search_inviter){
-                    return $query->where('name','like','%'.$search_inviter.'%');
+                    return $query->where('inviter','like','%'.$search_inviter.'%');
                 });
             }
             $shops = $shops
@@ -69,40 +87,13 @@ class ShopResourceController extends BaseController
                 ->data($shops->toArray()['data'])
                 ->output();
         }
+        $view = $status == 'all' ? 'index' : $status;
         return $this->response->title(trans('app.admin.panel'))
-            ->view('shop.'.$status)
-            ->data(compact('status'))
+            ->view('shop.'.$view)
+            ->data(compact('status','signers'))
             ->output();
     }
-    public function index(Request $request){
-        $limit = $request->input('limit',config('app.limit'));
-        $search = $request->input('search',[]);
-        $search_name = isset($search['name']) ? $search['name'] : '';
 
-        if ($this->response->typeIs('json')) {
-            $shops = $this->repository;
-
-            if(!empty($search_name))
-            {
-                $shops = $shops->where(function ($query) use ($search_name){
-                    return $query->where('name','like','%'.$search_name.'%');
-                });
-            }
-
-            $shops = $shops->orderBy('id','desc')
-                ->paginate($limit);
-
-            return $this->response
-                ->success()
-                ->count($shops->total())
-                ->data($shops->toArray()['data'])
-                ->output();
-
-        }
-        return $this->response->title(trans('app.name'))
-            ->view('shop.index')
-            ->output();
-    }
     public function create(Request $request)
     {
         $shop = $this->repository->newInstance([]);
@@ -156,6 +147,10 @@ class ShopResourceController extends BaseController
         $attributes['city_code'] = $city_code;
 
         $shop = $this->repository->create($attributes);
+        if(isset($attributes['signer']) && $attributes['signer'])
+        {
+            Signer::addSigner($attributes['signer']);
+        }
         return $shop;
     }
     public function show(Request $request,Shop $shop)
@@ -196,7 +191,10 @@ class ShopResourceController extends BaseController
             $attributes['city_code'] = $city_code;
 
             $shop->update($attributes);
-
+            if(isset($attributes['singer']) && $attributes['singer'])
+            {
+                Singer::addSinger($attributes['singer']);
+            }
             return $this->response->message(trans('messages.success.created', ['Module' => trans('shop.name')]))
                 ->code(0)
                 ->status('success')

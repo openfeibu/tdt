@@ -8,11 +8,23 @@
     <div class="main_full">
         <div class="layui-col-md12">
             {!! Theme::partial('message') !!}
-            <div class="tabel-message">
+            <div class="tabel-message  layui-form">
                 <div class="layui-inline tabel-btn">
                     <button class="layui-btn layui-btn-warm "><a href="{{ url('/admin/shop/create') }}">添加{{ trans('shop.name') }}</a></button>
                     <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
                 </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">{!! trans('shop.label.signer')!!}</label>
+                    <div class="layui-input-inline">
+                        <select name="signer" class="search_key">
+                            <option value="">全部</option>
+                            @foreach($signers as $key => $signer)
+                                <option value="{{ $signer['name'] }}">{{ $signer['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
                 <div class="layui-inline">
                    <input class="layui-input search_key" name="name" placeholder="门店名称" autocomplete="off">
                 </div>
@@ -62,7 +74,7 @@
             ]]
             ,id: 'fb-table'
             ,page: true
-            ,limit: 10
+            ,limit: 20
             ,height: 'full-200'
         });
     });
