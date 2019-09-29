@@ -39,6 +39,7 @@ $api->version('v1', function ($api) {
     $api->post('login', 'App\Http\Controllers\Api\Auth\LoginController@login');
     $api->post('/change_password','App\Http\Controllers\Api\UserController@changePassword');
     $api->get('get_coordinates', 'App\Http\Controllers\Api\HomeController@getCoordinates');
+    $api->get('get_address', 'App\Http\Controllers\Api\HomeController@getAddress');
     $api->get('shop', 'App\Http\Controllers\Api\ShopController@getShops');
 
 });

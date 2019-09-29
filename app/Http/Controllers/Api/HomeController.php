@@ -40,6 +40,20 @@ class HomeController extends BaseController
             'latitude' => $location['lat'],
         ])->json();
     }
+    public function getAddress(Request $request)
+    {
+        $longitude = $request->longitude;
+        $latitude = $request->latitude;
+
+        $lbs_service = new LBSService();
+        $map_data = $lbs_service->geocode_regeo($longitude,$latitude);
+
+        $address = $map_data['result']['address'];
+
+        return $this->response->success()->data([
+            'address' => $address,
+        ])->json();
+    }
     /* 高德地图
     public function getCoordinates(Request $request)
     {
