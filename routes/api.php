@@ -41,5 +41,6 @@ $api->version('v1', function ($api) {
     $api->get('get_coordinates', 'App\Http\Controllers\Api\HomeController@getCoordinates');
     $api->get('get_address', 'App\Http\Controllers\Api\HomeController@getAddress');
     $api->get('shop', 'App\Http\Controllers\Api\ShopController@getShops');
+    $api->get('/page/slug/{slug}','App\Http\Controllers\Api\PageController@getPageSlug');
 
 });

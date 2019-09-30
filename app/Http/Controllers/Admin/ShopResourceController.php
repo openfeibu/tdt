@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\DemoExport;
+use Excel;
 use App\Http\Controllers\Admin\ResourceController as BaseController;
 use App\Models\Area;
 use App\Models\Signer;
@@ -48,10 +50,6 @@ class ShopResourceController extends BaseController
     {
         $limit = $request->input('limit',config('app.limit'));
         $search = $request->input('search',[]);
-        $search_name = isset($search['name']) ? $search['name'] : '';
-        $search_inviter = isset($search['inviter']) ? $search['inviter'] : '';
-        $search_signer = isset($search['signer']) ? $search['signer'] : '';
-        $search_province_code = isset($search['province_code']) ? $search['province_code'] : '';
         $signers = Signer::get()->toArray();
         if ($this->response->typeIs('json')) {
             $shops = $this->repository;
@@ -59,32 +57,8 @@ class ShopResourceController extends BaseController
             {
                 $shops = $shops->where('status',$status);
             }
+            $shops = $this->search($shops,$search);
 
-            if($search_name)
-            {
-                $shops = $shops->where(function ($query) use ($search_name){
-                    return $query->where('name','like','%'.$search_name.'%');
-                });
-            }
-            if($search_signer)
-            {
-                $shops = $shops->where(function ($query) use ($search_signer){
-                    return $query->where('signer',$search_signer);
-                });
-            }
-            if($search_province_code)
-            {
-                $shops = $shops->where(function ($query) use ($search_province_code){
-                    return $query->where('province_code',$search_province_code);
-                });
-            }
-
-            if($search_inviter)
-            {
-                $shops = $shops->where(function ($query) use ($search_inviter){
-                    return $query->where('inviter','like','%'.$search_inviter.'%');
-                });
-            }
             $shops = $shops
                 ->orderBy('id','desc')
                 ->paginate($limit);
@@ -101,7 +75,40 @@ class ShopResourceController extends BaseController
             ->data(compact('status','signers'))
             ->output();
     }
+    private function search($shops,$search)
+    {
+        $search_name = isset($search['name']) ? $search['name'] : '';
+        $search_inviter = isset($search['inviter']) ? $search['inviter'] : '';
+        $search_signer = isset($search['signer']) ? $search['signer'] : '';
+        $search_province_code = isset($search['province_code']) ? $search['province_code'] : '';
 
+        if($search_name)
+        {
+            $shops = $shops->where(function ($query) use ($search_name){
+                return $query->where('name','like','%'.$search_name.'%');
+            });
+        }
+        if($search_signer)
+        {
+            $shops = $shops->where(function ($query) use ($search_signer){
+                return $query->where('signer',$search_signer);
+            });
+        }
+        if($search_province_code)
+        {
+            $shops = $shops->where(function ($query) use ($search_province_code){
+                return $query->where('province_code',$search_province_code);
+            });
+        }
+
+        if($search_inviter)
+        {
+            $shops = $shops->where(function ($query) use ($search_inviter){
+                return $query->where('inviter','like','%'.$search_inviter.'%');
+            });
+        }
+        return $shops;
+    }
     public function create(Request $request)
     {
         $shop = $this->repository->newInstance([]);
@@ -115,7 +122,7 @@ class ShopResourceController extends BaseController
     {
         try {
             $attributes = $request->all();
-
+            $this->lbs_service->debug = false;
             $shop = $this->submitShop($attributes);
 
             return $this->response->message(trans('messages.success.created', ['Module' => trans('shop.name')]))
@@ -177,7 +184,7 @@ class ShopResourceController extends BaseController
     {
         try {
             $attributes = $request->all();
-
+            $this->lbs_service->debug = false;
             $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
 
             $adcode = $map_data['result']['ad_info']['adcode'];
@@ -245,9 +252,13 @@ class ShopResourceController extends BaseController
                 }
                 continue;
             }
-
             foreach ($head_key_arr as $data_field => $data_value)
             {
+
+                if($data_field == 'cooperation_date')
+                {
+                    var_dump(date('Y-m-d',$v[$keys[$data_field]]));exit;
+                }
                 $attributes[$data_field] = $excel_data[$k][$data_field]  = isset($keys[$data_field]) && isset($v[$keys[$data_field]]) ? trim($v[$keys[$data_field]]) : '';
             }
             if($attributes['address'])
@@ -288,6 +299,44 @@ class ShopResourceController extends BaseController
             ->status("success")
             ->url(guard_url('shop'))
             ->redirect();
+
+    }
+    public function export(Request $request)
+    {
+        $search = $request->input('search',[]);
+        $handle_fields = $request->input('fields',[]);
+        $export_fields = config('model.shop.shop.excel_fields');
+        $status = $request->status ?? 'all';
+        $shops = $this->repository;
+        if($status != 'all')
+        {
+            $shops = $shops->where('status',$status);
+        }
+        $shops = $this->search($shops,$search);
+
+        $shops = $shops
+            ->orderBy('id','desc')
+            ->get()->toArray();
+        $export_data = [];
+        $field_i = 0;
+        foreach ($export_fields as $key => $field)
+        {
+
+            $export_data[0][$field_i] = trans('shop.label.'.$field);
+            $field_i++;
+        }
+        $i = 1;
+        foreach ($shops as $key => $shop)
+        {
+            foreach($export_fields as $key => $field)
+            {
+                $export_data[$i][$field_i] = $shop[$field];
+                $field_i++;
+            }
+            $i++;
+        }
+        return Excel::download(new DemoExport($export_data),"门店列表".time().'.xlsx');
+
 
     }
     /**

@@ -11,14 +11,15 @@
             <div class="tabel-message  layui-form">
                 <div class="layui-inline tabel-btn">
                     <button class="layui-btn layui-btn-warm "><a href="{{ url('/admin/shop/create') }}">添加{{ trans('shop.name') }}</a></button>
-                    <div class="layui-inline tabel-btn">
-                        <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
-                        <button class="layui-btn layui-btn-normal export">
-                            <i class="layui-icon">&#xe601;</i> 导出所选
-                        </button>
-                    </div>
-                    <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
+                    <button class="layui-btn layui-btn-normal export-shop">
+                        <i class="layui-icon">&#xe601;</i> 导出筛选
+                    </button>
+                    <button class="layui-btn layui-btn-primary" data-type="del" data-events="del">删除</button>
                 </div>
+            </div>
+        </div>
+        <div class="layui-col-md12 mt10">
+            <div class="tabel-message  layui-form">
                 <div class="layui-inline">
                     <label class="layui-form-label">{{ trans('shop.label.province_name') }}</label>
                     <div class="layui-input-inline">
@@ -43,11 +44,12 @@
                 </div>
 
                 <div class="layui-inline">
-                   <input class="layui-input search_key" name="name" placeholder="门店名称" autocomplete="off">
+                    <input class="layui-input search_key" name="name" placeholder="门店名称" autocomplete="off">
                 </div>
                 <button class="layui-btn" data-type="reload">搜索</button>
             </div>
-
+        </div>
+        <div class="layui-col-md12">
             <table id="fb-table" class="layui-table"  lay-filter="fb-table">
 
             </table>
@@ -94,6 +96,22 @@
             ,limit: 20
             ,height: 'full-200'
         });
+        $(".export-shop").on("click",function(){
+
+            var url = "{{ guard_url('shop_export') }}?_token={!! csrf_token() !!}"
+            $(".search_key").each(function(){
+                var name = $(this).attr('name');
+                url += "&search["+name+"]="+$(this).val();
+            });
+
+            var load =layer.load();
+            window.location.href = url;
+
+            console.log(url);
+            layer.close(load);
+
+
+        })
     });
 </script>
 {!! Theme::partial('common_handle_js') !!}
