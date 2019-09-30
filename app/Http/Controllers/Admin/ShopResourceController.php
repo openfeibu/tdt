@@ -51,6 +51,7 @@ class ShopResourceController extends BaseController
         $search_name = isset($search['name']) ? $search['name'] : '';
         $search_inviter = isset($search['inviter']) ? $search['inviter'] : '';
         $search_signer = isset($search['signer']) ? $search['signer'] : '';
+        $search_province_code = isset($search['province_code']) ? $search['province_code'] : '';
         $signers = Signer::get()->toArray();
         if ($this->response->typeIs('json')) {
             $shops = $this->repository;
@@ -71,6 +72,13 @@ class ShopResourceController extends BaseController
                     return $query->where('signer',$search_signer);
                 });
             }
+            if($search_province_code)
+            {
+                $shops = $shops->where(function ($query) use ($search_province_code){
+                    return $query->where('province_code',$search_province_code);
+                });
+            }
+
             if($search_inviter)
             {
                 $shops = $shops->where(function ($query) use ($search_inviter){

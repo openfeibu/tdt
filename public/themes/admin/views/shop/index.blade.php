@@ -11,7 +11,24 @@
             <div class="tabel-message  layui-form">
                 <div class="layui-inline tabel-btn">
                     <button class="layui-btn layui-btn-warm "><a href="{{ url('/admin/shop/create') }}">添加{{ trans('shop.name') }}</a></button>
+                    <div class="layui-inline tabel-btn">
+                        <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
+                        <button class="layui-btn layui-btn-normal export">
+                            <i class="layui-icon">&#xe601;</i> 导出所选
+                        </button>
+                    </div>
                     <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">{{ trans('shop.label.province_name') }}</label>
+                    <div class="layui-input-inline">
+                        <select name="province_code" class="search_key">
+                            <option value="">全部</option>
+                            @foreach(app('area_repository')->getProvinces() as $key => $province)
+                                <option value="{{ $province['code'] }}">{{ $province['capital'] }} {{ $province['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">{!! trans('shop.label.signer')!!}</label>

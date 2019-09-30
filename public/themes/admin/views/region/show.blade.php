@@ -45,7 +45,7 @@
                         <label class="layui-form-label">{{ trans('region.label.region_area') }}</label>
                         <div class="layui-input-block">
                             @foreach(app('area_repository')->getProvinces() as $key => $province)
-                                <input type="checkbox" name="area_code[]" title="{{ $province['name'] }}" value="{{ $province['code'] }}" @if(in_array($province['code'],$region_area_codes)) checked @endif>
+                                <input type="checkbox" name="area_code[]" title="{{ $province['capital'] }} {{ $province['name'] }}" value="{{ $province['code'] }}" @if(in_array($province['code'],$region_area_codes)) checked @endif>
                             @endforeach
                         </div>
                     </div>
