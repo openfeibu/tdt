@@ -41,7 +41,7 @@ class ShopController extends BaseController
         $site = $city->name;
         if($district->city_grade == 'county-city')
         {
-            $site = $district->city_grade;
+            $site = $district->name;
             $city_grade = $district->city_grade;
         }else{
             $city_grade = $city->city_grade;
