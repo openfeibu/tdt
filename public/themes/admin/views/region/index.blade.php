@@ -43,7 +43,7 @@
                 ,{field:'name',title:'{{ trans('region.label.name') }}',edit:'text'}
                 ,{field:'leader',title:'{{ trans('region.label.leader') }}',edit:'text'}
                 ,{field:'tel',title:'{{ trans('region.label.tel') }}',edit:'text'}
-                ,{field:'mobile',title:'{{ trans('region.label.mobile') }}',edit:'text'}
+                ,{field:'phone',title:'{{ trans('region.label.phone') }}',edit:'text'}
                 ,{field:'wechat',title:'{{ trans('region.label.wechat') }}',edit:'text'}
                 ,{field:'area_names',title:'{{ trans('region.label.region_area') }}'}
                 ,{field:'created_at',title:'{{ trans('app.created_at') }}'}

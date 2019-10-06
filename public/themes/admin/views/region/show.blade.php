@@ -30,9 +30,9 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">{{ trans('region.label.mobile') }}</label>
+                        <label class="layui-form-label">{{ trans('region.label.phone') }}</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="mobile"  autocomplete="off" placeholder="请输入{{ trans('region.label.mobile') }}" class="layui-input" value="{{ $region['mobile'] }}">
+                            <input type="text" name="phone"  autocomplete="off" placeholder="请输入{{ trans('region.label.phone') }}" class="layui-input" value="{{ $region['phone'] }}">
                         </div>
                     </div>
                     <div class="layui-form-item">

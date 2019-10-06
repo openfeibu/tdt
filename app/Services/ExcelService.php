@@ -7,7 +7,7 @@ use File;
 use Session;
 use Storage;
 use Excel;
-use App\Import\DemoImport;
+use App\Imports\DemoImport;
 use Illuminate\Http\Request;
 
 class ExcelService

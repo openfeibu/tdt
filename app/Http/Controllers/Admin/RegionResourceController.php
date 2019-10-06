@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\ResourceController as BaseController;
 use App\Models\Area;
+use App\Models\RegionRole;
+use App\Models\RegionUser;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Region;
@@ -127,6 +129,19 @@ class RegionResourceController extends BaseController
 
             }
             $region_areas ? RegionArea::insert($region_areas) : [];
+
+            $phone = RegionUser::where('phone',$attributes['phone'])->value('phone');
+            if(!$phone && $region)
+            {
+                $region_user = RegionUser::create([
+                    'phone' => $attributes['phone'],
+                    'name' => $attributes['leader'],
+                    'region_id' => $region->id,
+                    'password' => '123456'
+                ]);
+                $role_id = RegionRole::where('slug','superuser')->value('id');
+                $region_user->roles()->sync([$role_id]);
+            }
 
             return $this->response->message(trans('messages.success.created', ['Module' => trans('region.name')]))
                 ->code(0)

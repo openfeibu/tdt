@@ -32,6 +32,17 @@
                     </div>
                 </div>
                 <div class="layui-inline">
+                    <label class="layui-form-label">{{ trans('shop.label.status_desc') }}</label>
+                    <div class="layui-input-inline">
+                        <select name="province_code" class="search_key">
+                            <option value="">全部</option>
+                            @foreach(config('model.shop.shop.status') as $status)
+                                <option value="{{ $status }}">{{ trans('shop.status.'.$status) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
                     <label class="layui-form-label">{!! trans('shop.label.signer')!!}</label>
                     <div class="layui-input-inline">
                         <select name="signer" class="search_key">

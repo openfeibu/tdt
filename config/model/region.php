@@ -21,7 +21,7 @@ return [
         'hidden'       => [],
         'visible'      => [],
         'guarded'      => ['*'],
-        'fillable'     => ['name', 'leader', 'tel','mobile','wechat','created_at','updated_at'],
+        'fillable'     => ['name', 'leader', 'tel','phone','wechat','created_at','updated_at'],
         'translate'    => [],
         'upload_folder' => 'region',
         'encrypt'      => ['id'],

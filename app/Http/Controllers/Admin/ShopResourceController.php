@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\DemoExport;
+use App\Imports\ShopImport;
 use Excel;
 use App\Http\Controllers\Admin\ResourceController as BaseController;
 use App\Models\Area;
@@ -232,7 +233,7 @@ class ShopResourceController extends BaseController
     public function submitImport(Request $request)
     {
         set_time_limit(0);
-        $res = app('excel_service')->uploadExcel();
+        $res = (new ShopImport())->toArray($request->file)[0];
         $count = count($res) - 1;
         $success_count = 0;
         $empty_count = 0;
@@ -255,9 +256,14 @@ class ShopResourceController extends BaseController
             foreach ($head_key_arr as $data_field => $data_value)
             {
 
-                if($data_field == 'cooperation_date')
+                if(in_array($data_field,['cooperation_date','contract_date']))
                 {
-                    var_dump(date('Y-m-d',$v[$keys[$data_field]]));exit;
+                    try{
+                        $v[$keys[$data_field]] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($v[$keys[$data_field]])->format('Y-m-d');
+                    }catch (Exception $e)
+                    {
+                        $v[$keys[$data_field]] = '';
+                    }
                 }
                 $attributes[$data_field] = $excel_data[$k][$data_field]  = isset($keys[$data_field]) && isset($v[$keys[$data_field]]) ? trim($v[$keys[$data_field]]) : '';
             }

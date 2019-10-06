@@ -95,4 +95,36 @@ return [
         ],
 
     ],
+    'region_user'     => [
+        'model' => [
+            'model'         => \App\Models\RegionUser::class,
+            'table'         => 'region_users',
+            //'presenter'     => \Litepie\User\Repositories\Presenter\UserPresenter::class,
+            'hidden'        => [],
+            'visible'       => [],
+            'guarded'       => ['*'],
+            //'slugs'         => [],
+            'dates'         => ['created_at', 'updated_at'],
+            'appends'       => [],
+            'fillable'      => [ 'name', 'email', 'phone', 'token','password','remember_token','created_at','updated_at'],
+            'translate'     => [],
+
+            'upload_folder' => 'user/user',
+            'uploads'       => [
+                'photo' => [
+                    'count' => 1,
+                    'type'  => 'image',
+                ],
+            ],
+            'casts'         => [
+            ],
+            'revision'      => [],
+            'perPage'       => '20',
+            'search'        => [
+                'name'        => 'like',
+                'email'       => 'like',
+            ],
+        ],
+
+    ],
 ];
