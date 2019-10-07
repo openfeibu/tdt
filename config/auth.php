@@ -45,6 +45,18 @@ return [
             ],
 
         ],
+        'region'  => [
+            'web' => [
+                'driver'   => 'session',
+                'provider' => 'region_users',
+            ],
+
+            'api' => [
+                'driver'   => 'token',
+                'provider' => 'region_users',
+            ],
+
+        ],
         /*
         'client' => [
             'web' => [
@@ -86,6 +98,10 @@ return [
         'admins'   => [
             'driver' => 'eloquent',
             'model'  => App\Models\AdminUser::class,
+        ],
+        'region_users' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\RegionUser::class,
         ],
         'clients' => [
             'driver' => 'eloquent',

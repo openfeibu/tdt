@@ -2,7 +2,7 @@
 
 <div class="login layui-anim layui-anim-up">
 	<div class="login-con">
-		<div class="login-con-title">飞步科技管理后台</div>
+		<div class="login-con-title">头道汤区域保护管理后台</div>
 		{!! Theme::partial('message') !!}
 		{!!Form::vertical_open()->id('login')->method('POST')->class('layui-form')->action(url('admin/login')) !!}
 			<div class="form-title">

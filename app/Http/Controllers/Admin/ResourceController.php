@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Route;
+use App\Models\Shop;
 use App\Http\Controllers\Admin\Controller as BaseController;
 use App\Traits\AdminUser\AdminUserPages;
 use App\Http\Response\ResourceResponse;
@@ -32,8 +33,13 @@ class ResourceController extends BaseController
      */
     public function home()
     {
+        $shop_count = Shop::count();
+        $normal_shop_count = Shop::where('status','normal')->count();
+        $earnest_shop_count = Shop::where('status','earnest')->count();
+        $cancel_shop_count = Shop::where('status','cancel')->count();
         return $this->response->title(trans('app.admin.panel'))
             ->view('home')
+            ->data(compact('shop_count','normal_shop_count','earnest_shop_count','cancel_shop_count'))
             ->output();
     }
     public function dashboard()

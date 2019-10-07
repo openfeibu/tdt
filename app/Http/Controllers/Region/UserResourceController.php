@@ -1,7 +1,7 @@
 <?php
-namespace App\Http\Controllers\Provider;
+namespace App\Http\Controllers\Region;
 
-use App\Http\Controllers\Provider\ResourceController as BaseController;
+use App\Http\Controllers\Region\ResourceController as BaseController;
 use App\Models\Order;
 use Auth;
 use Illuminate\Http\Request;
@@ -38,7 +38,7 @@ class UserResourceController extends BaseController
 
         if ($this->response->typeIs('json')) {
             $data = $this->repository
-                ->where(['provider_id' => Auth::user()->provider_id]);
+                ->where(['region_id' => Auth::user()->region_id]);
             if(!empty($search_name))
             {
                 $data = $data->where(function ($query) use ($search_name){
@@ -102,7 +102,7 @@ class UserResourceController extends BaseController
     {
         try {
             $attributes              = $request->all();
-            $attributes['provider_id'] = Auth::user()->provider_id;
+            $attributes['region_id'] = Auth::user()->region_id;
 
             $user = $this->repository->create($attributes);
 
@@ -236,7 +236,7 @@ class UserResourceController extends BaseController
         $empty_count = 0;
         $count = count($res);
         $excel_data = [];
-        $provider_id = Auth::user()->provider_id;
+        $region_id = Auth::user()->region_id;
 
         foreach ( $res as $k => $v ) {
             if(trim($v['电话']))
@@ -249,7 +249,7 @@ class UserResourceController extends BaseController
                         'name' => isset($v['姓名']) ? trim($v['姓名']) : '',
                         'phone' => isset($v['电话']) ? trim($v['电话']) : '',
                         'wechat' => isset($v['微信']) ? trim($v['微信']) : '',
-                        'provider_id' => $provider_id,
+                        'region_id' => $region_id,
                         'password' => '123456'
                     ];
                     $this->repository->create($excel_data[$k]);

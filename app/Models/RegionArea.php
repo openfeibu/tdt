@@ -17,4 +17,9 @@ class RegionArea extends BaseModel
     protected $config = 'model.region.region_area';
 
     public $timestamps = false;
+
+    public function getRegionAreaCodes($region_id)
+    {
+        return self::where('region_id',$region_id)->pluck('area_code');
+    }
 }

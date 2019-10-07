@@ -106,7 +106,7 @@ return [
             //'slugs'         => [],
             'dates'         => ['created_at', 'updated_at'],
             'appends'       => [],
-            'fillable'      => [ 'name', 'email', 'phone', 'token','password','remember_token','created_at','updated_at'],
+            'fillable'      => [ 'name', 'email', 'phone', 'token','region_id','password','remember_token','created_at','updated_at'],
             'translate'     => [],
 
             'upload_folder' => 'user/user',

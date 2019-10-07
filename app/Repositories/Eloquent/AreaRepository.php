@@ -16,4 +16,9 @@ class AreaRepository extends BaseRepository implements AreaRepositoryInterface
         $provinces = $this->model->where('parent_code','100000')->orderBy('pinyin','asc')->get()->toArray();
         return $provinces;
     }
+    public function getRegionProvinces($area_code_arr)
+    {
+        $provinces = $this->model->where('parent_code','100000')->whereIn('code',$area_code_arr)->orderBy('pinyin','asc')->get()->toArray();
+        return $provinces;
+    }
 }

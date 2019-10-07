@@ -82,6 +82,7 @@ class ShopResourceController extends BaseController
         $search_inviter = isset($search['inviter']) ? $search['inviter'] : '';
         $search_signer = isset($search['signer']) ? $search['signer'] : '';
         $search_province_code = isset($search['province_code']) ? $search['province_code'] : '';
+        $search_status = isset($search['status']) ? $search['status'] : '';
 
         if($search_name)
         {
@@ -106,6 +107,12 @@ class ShopResourceController extends BaseController
         {
             $shops = $shops->where(function ($query) use ($search_inviter){
                 return $query->where('inviter','like','%'.$search_inviter.'%');
+            });
+        }
+        if($search_status)
+        {
+            $shops = $shops->where(function ($query) use ($search_status){
+                return $query->where('status',$search_status);
             });
         }
         return $shops;

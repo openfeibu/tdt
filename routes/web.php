@@ -34,10 +34,10 @@ Route::group([
     Route::post('/system_page/destroyAll', 'SystemPageResourceController@destroyAll')->name('system_page.destroy_all');
     Route::get('/setting/company', 'SettingResourceController@company')->name('setting.company.index');
     Route::post('/setting/updateCompany', 'SettingResourceController@updateCompany');
-    Route::get('/setting/publicityVideo', 'SettingResourceController@publicityVideo')->name('setting.publicity_video.index');
-    Route::post('/setting/updatePublicityVideo', 'SettingResourceController@updatePublicityVideo');
     Route::get('/setting/station', 'SettingResourceController@station')->name('setting.station.index');
     Route::post('/setting/updateStation', 'SettingResourceController@updateStation');
+    Route::get('/setting/protections', 'SettingResourceController@protections')->name('setting.protections.index');
+    Route::post('/setting/updateProtections', 'SettingResourceController@updateProtections');
 
     Route::resource('link', 'LinkResourceController');
     Route::post('/link/destroyAll', 'LinkResourceController@destroyAll')->name('link.destroy_all');
@@ -76,6 +76,9 @@ Route::group([
     Route::resource('region', 'RegionResourceController');
     Route::post('/region/destroyAll', 'RegionResourceController@destroyAll')->name('region.destroy_all');
 
+    Route::resource('region_user', 'RegionUserResourceController');
+    Route::post('/region_user/destroyAll', 'RegionUserResourceController@destroyAll')->name('region_user.destroy_all');
+    
     Route::resource('shop', 'ShopResourceController');
     Route::post('/shop/destroyAll', 'ShopResourceController@destroyAll')->name('shop.destroy_all');
     Route::get('shop_import', 'ShopResourceController@import')->name('shop.import');
@@ -101,6 +104,37 @@ Route::group([
     Route::get('verify/{code?}', 'Auth\LoginController@verify');
 
 });
+
+Route::group([
+    'namespace' => 'Region',
+    'prefix' => 'region',
+    'as' => 'region.',
+], function () {
+    Auth::routes();
+    Route::get('logout', 'Auth\LoginController@logout');
+    Route::get('/', 'ResourceController@home')->name('home');
+    Route::get('password', 'RegionUserController@getPassword');
+    Route::post('password', 'RegionUserController@postPassword');
+
+    Route::resource('shop', 'ShopResourceController');
+    Route::post('/shop/destroyAll', 'ShopResourceController@destroyAll')->name('shop.destroy_all');
+    Route::get('shop_export', 'ShopResourceController@export')->name('shop.export');
+
+    Route::resource('user', 'UserResourceController');
+    Route::post('/user/destroyAll', 'UserResourceController@destroyAll')->name('user.destroy_all');
+
+
+    Route::resource('region_user', 'RegionUserResourceController');
+    Route::post('/region_user/destroyAll', 'RegionUserResourceController@destroyAll')->name('region_user.destroy_all');
+
+    Route::resource('permission', 'PermissionResourceController');
+    Route::post('/permission/destroyAll', 'PermissionResourceController@destroyAll')->name('permission.destroy_all');
+    Route::resource('role', 'RoleResourceController');
+    Route::post('/role/destroyAll', 'RoleResourceController@destroyAll')->name('role.destroy_all');
+
+    Route::post('/upload/{config}/{path?}', 'UploadController@upload')->where('path', '(.*)');
+});
+
 //Route::get('
 ///{slug}.html', 'PagePublicController@getPage');
 /*

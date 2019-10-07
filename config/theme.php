@@ -30,6 +30,10 @@ return array(
             'theme'  => 'user',
             'view'   => 'user',
         ],
+        'region'    => [
+            'theme'  => 'region',
+            'view'   => 'region',
+        ],
         'client'    => [
             'theme'  => 'client',
             'view'   => 'client',
