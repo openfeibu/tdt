@@ -25,28 +25,39 @@ class ShopController extends BaseController
         $latitude = $request->latitude;
 
         $map_data = $this->lbs_service->geocode_regeo($longitude,$latitude);
-
-        $adcode = $map_data['result']['ad_info']['adcode'];
-        $district = app('area_repository')->where('code',$adcode)->first();
-
-        if(!$district)
-        {
-            throw new OutputServerMessageException("地址找不到，请联系管理员更新");
-        }
-
-        $city = app('area_repository')->where('code',$district->parent_code)->first();
+        $province_name = $map_data['result']['address_component']['province'] ;
 
         $city_grade = '';
-
-        $site = $city->name;
-        if($district->city_grade == 'county-city')
+        if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
         {
-            $site = $district->name;
-            $city_grade = $district->city_grade;
+            $site = $province_name;
+            $city_grade = 'hmt';
         }else{
-            $city_grade = $city->city_grade;
-        }
+            $adcode = $map_data['result']['ad_info']['adcode'] ?? '';
 
+            if(!$adcode)
+            {
+                throw new OutputServerMessageException("地址不正确");
+            }
+
+            $district = app('area_repository')->where('code',$adcode)->first();
+
+            if(!$district)
+            {
+                throw new OutputServerMessageException("地址找不到，请联系管理员更新");
+            }
+
+            $city = app('area_repository')->where('code',$district->parent_code)->first();
+
+            $site = $city->name;
+            if($district->city_grade == 'county-city')
+            {
+                $site = $district->name;
+                $city_grade = $district->city_grade;
+            }else{
+                $city_grade = $city->city_grade;
+            }
+        }
         $km = setting($city_grade);
         $km = $km ? $km : setting('default_km');
 

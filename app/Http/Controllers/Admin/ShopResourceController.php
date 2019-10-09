@@ -150,16 +150,30 @@ class ShopResourceController extends BaseController
     public function submitShop($attributes)
     {
         $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
+        $province_name = $map_data['result']['address_component']['province'] ;
+        if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
+        {
+            $province_code = hmt_code($province_name);
+            $province = app('area_repository')->where('code',$province_code)->first();
+            $city_name = $province_name;
+            $towncode = '';
+            $district_name = '';
+            $adcode = '';
+        }
+        else{
+            $adcode = $map_data['result']['ad_info']['adcode'];
 
-        $adcode = $map_data['result']['ad_info']['adcode'];
-        $district_name = $map_data['result']['address_component']['district'];
-        $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
+            $district_name = $map_data['result']['address_component']['district'];
+            $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
 
-        $district = app('area_repository')->where('code',$adcode)->first();
-        $city = app('area_repository')->where('code',$district->parent_code)->first();
-        $city_name = $city->name;
-        $city_code = $city->code;
-        $province = app('area_repository')->where('code',$city->parent_code)->first();
+            $district = app('area_repository')->where('code',$adcode)->first();
+            $city = app('area_repository')->where('code',$district->parent_code)->first();
+            $city_name = $city->name;
+            $city_code = $city->code;
+            $province = app('area_repository')->where('code',$city->parent_code)->first();
+
+        }
+
 
         $attributes['adcode'] = $adcode;
         $attributes['district_name'] = $district_name;
@@ -194,16 +208,30 @@ class ShopResourceController extends BaseController
             $attributes = $request->all();
             $this->lbs_service->debug = false;
             $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
+            $province_name = $map_data['result']['address_component']['province'] ;
+            if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
+            {
+                $province_code = hmt_code($province_name);
+                $province = app('area_repository')->where('code',$province_code)->first();
+                $city_name = $province_name;
+                $towncode = '';
+                $district_name = '';
+                $adcode = '';
+            }
+            else{
+                $adcode = $map_data['result']['ad_info']['adcode'];
 
-            $adcode = $map_data['result']['ad_info']['adcode'];
-            $district_name = $map_data['result']['address_component']['district'];
-            $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
+                $district_name = $map_data['result']['address_component']['district'];
+                $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
 
-            $district = app('area_repository')->where('code',$adcode)->first();
-            $city = app('area_repository')->where('code',$district->parent_code)->first();
-            $city_name = $city->name;
-            $city_code = $city->code;
-            $province = app('area_repository')->where('code',$city->parent_code)->first();
+                $district = app('area_repository')->where('code',$adcode)->first();
+                $city = app('area_repository')->where('code',$district->parent_code)->first();
+                $city_name = $city->name;
+                $city_code = $city->code;
+                $province = app('area_repository')->where('code',$city->parent_code)->first();
+
+            }
+
 
             $attributes['adcode'] = $adcode;
             $attributes['district_name'] = $district_name;

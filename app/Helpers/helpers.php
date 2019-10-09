@@ -785,3 +785,18 @@ if (!function_exists('check_gifcartoon')) {
         return true;
     }
 }
+if (!function_exists('hmt_code')) {
+    function hmt_code($province_name)
+    {
+        if (strstr($province_name, '香港')) {
+            $province_code = '810000';
+        }
+        if (strstr($province_name, '澳门')) {
+            $province_code = '820000';
+        }
+        if (strstr($province_name, '台湾')) {
+            $province_code = '710000';
+        }
+        return $province_code;
+    }
+}
