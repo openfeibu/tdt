@@ -156,6 +156,7 @@ class ShopResourceController extends BaseController
             $province_code = hmt_code($province_name);
             $province = app('area_repository')->where('code',$province_code)->first();
             $city_name = $province_name;
+            $city_code = $province->code;
             $towncode = '';
             $district_name = '';
             $adcode = '';
@@ -214,6 +215,7 @@ class ShopResourceController extends BaseController
                 $province_code = hmt_code($province_name);
                 $province = app('area_repository')->where('code',$province_code)->first();
                 $city_name = $province_name;
+                $city_code = $province->code;
                 $towncode = '';
                 $district_name = '';
                 $adcode = '';
