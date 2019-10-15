@@ -149,6 +149,16 @@ class ShopResourceController extends BaseController
     }
     public function submitShop($attributes)
     {
+        $attributes = $this->handleShopAttributes($attributes);
+        $shop = $this->repository->create($attributes);
+        if(isset($attributes['signer']) && $attributes['signer'])
+        {
+            Signer::addSigner($attributes['signer']);
+        }
+        return $shop;
+    }
+    public function handleShopAttributes($attributes)
+    {
         $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
         $province_name = $map_data['result']['address_component']['province'] ;
         if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
@@ -184,12 +194,7 @@ class ShopResourceController extends BaseController
         $attributes['city_name'] = $city_name;
         $attributes['city_code'] = $city_code;
 
-        $shop = $this->repository->create($attributes);
-        if(isset($attributes['signer']) && $attributes['signer'])
-        {
-            Signer::addSigner($attributes['signer']);
-        }
-        return $shop;
+        return $attributes;
     }
     public function show(Request $request,Shop $shop)
     {
@@ -269,76 +274,93 @@ class ShopResourceController extends BaseController
     }
     public function submitImport(Request $request)
     {
+        //ini_set("error_reporting","E_ALL & ~E_NOTICE");
         set_time_limit(0);
-        $res = (new ShopImport())->toArray($request->file)[0];
-        $count = count($res) - 1;
-        $success_count = 0;
-        $empty_count = 0;
-        $excel_data = [];
-        $error_message = "";
-        foreach ( $res as $k => $v ) {
-            if($k == 0)
-            {
-                $head_key_arr = ['name' => '店名' ,'leader' => '负责人','mobile' => '电话','inviter' => '邀约人','first' => '首次','signer' => '签单','address' => '销售区域（门店地址）','cooperation_date' => '合作时间','is_full' => '全款','status' => '备注','contract_date' => '合同签约'];
-                $keys = [];
-                foreach ($v as $head_k => $head_v)
+        $all_res = (new ShopImport())->toArray($request->file);
+        $all_shop_attributes = [];
+        $head_key_arr = ['management_region' => '运管区域','name' => '店名' ,'leader' => '负责人','mobile' => '电话','inviter' => '邀约人','first' => '首次','signer' => '签单','address' => '销售区域（门店地址）','cooperation_date' => '合作时间','is_full' => '全款','status' => '状态','postscript' => '备注'];
+        for ($i = 0; $i <=5; $i++)
+        {
+            $res = $all_res[$i];
+            $count = count($res) - 1;
+            $success_count = 0;
+            $empty_count = 0;
+            $excel_data = [];
+            $error_message = "";
+            foreach ( $res as $k => $v ) {
+                if(count(array_filter($v)) <= 1)
                 {
-                    if(in_array(trim($head_v),array_values($head_key_arr)))
-                    {
-                        $keys[array_search(trim($head_v),$head_key_arr)] = $head_k;
-                    }
-                }
-                continue;
-            }
-            foreach ($head_key_arr as $data_field => $data_value)
-            {
-
-                if(in_array($data_field,['cooperation_date','contract_date']))
-                {
-                    try{
-                        $v[$keys[$data_field]] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($v[$keys[$data_field]])->format('Y-m-d');
-                    }catch (Exception $e)
-                    {
-                        $v[$keys[$data_field]] = '';
-                    }
-                }
-                $attributes[$data_field] = $excel_data[$k][$data_field]  = isset($keys[$data_field]) && isset($v[$keys[$data_field]]) ? trim($v[$keys[$data_field]]) : '';
-            }
-            if($attributes['address'])
-            {
-                $attributes['name'] = $attributes['name'] ? $attributes['name'] : '头道汤';
-                if($attributes['is_full'] != "是")
-                {
-                    $attributes['price'] = $attributes['is_full'];
-                    $attributes['is_full'] = 0;
-                }else{
-                    $attributes['is_full'] = 1;
-                }
-                $status_arr = trans('shop.status');
-                $attributes['status'] = array_search($attributes['status'],$status_arr);
-                $map_data = $this->lbs_service->geocode_geo($excel_data[$k]['address']);
-                if(isset($map_data['error']) && $map_data['error'])
-                {
-                    $error_message .= "\n第".$k."行地理位置无法识别;";
                     continue;
                 }
-                $location = $map_data['result']['location'];
-
-                $attributes['longitude'] = $location['lng'];
-                $attributes['latitude'] = $location['lat'];
-
-                $this->submitShop($attributes);
-                $success_count++;
-            }else{
-                $empty_count++;
-                if($empty_count >=3)
+                if($k==0 || $k==1)
                 {
-                    break;
+                    $keys = [];
+                    foreach ($v as $head_k => $head_v)
+                    {
+                        if(in_array(trim($head_v),array_values($head_key_arr)))
+                        {
+                            $keys[array_search(trim($head_v),$head_key_arr)] = $head_k;
+                        }
+                    }
+                    continue;
+                }
+                if($v[2] == '店名')
+                {
+                    continue;
+                }
+                foreach ($head_key_arr as $data_field => $data_value)
+                {
+                    if(in_array($data_field,['cooperation_date']) && !empty(trim($v[$keys[$data_field]])))
+                    {
+                        try{
+                            $v[$keys[$data_field]] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject(trim($v[$keys[$data_field]]))->format('Y-m-d');
+                        }catch (Exception $e)
+                        {
+                            $v[$keys[$data_field]] = '';
+                        }
+                    }
+                    $attributes[$data_field] = $excel_data[$k][$data_field]  = isset($keys[$data_field]) && isset($v[$keys[$data_field]]) ? trim($v[$keys[$data_field]]) : '';
+                }
+                if($attributes['address'])
+                {
+                    $attributes['name'] = $attributes['name'] ? $attributes['name'] : '头道汤';
+                    if($attributes['is_full'] != "是")
+                    {
+                        $attributes['price'] = $attributes['is_full'];
+                        $attributes['is_full'] = 0;
+                    }else{
+                        $attributes['is_full'] = 1;
+                    }
+                    $status_arr = trans('shop.status');
+
+                    $attributes['status'] = array_search($attributes['status'],$status_arr);
+                    $map_data = $this->lbs_service->geocode_geo($excel_data[$k]['address']);
+                    if(isset($map_data['error']) && $map_data['error'])
+                    {
+                        $error_message .= "\n第".($i+1)."个表格第".$k."行地理位置无法识别;";
+                        continue;
+                    }
+                    $location = $map_data['result']['location'];
+
+                    $attributes['longitude'] = $location['lng'];
+                    $attributes['latitude'] = $location['lat'];
+
+                    $attributes = $this->handleShopAttributes($attributes);
+                    $all_shop_attributes[] = $attributes;
+                    $success_count++;
+                }else{
+                    $empty_count++;
+                    if($empty_count >=3)
+                    {
+                        break;
+                    }
                 }
             }
         }
-
-        return $this->response->message("共发现".$count."条数据，排除空数据及重复数据后共成功上传".$success_count."条;".$error_message)
+        Shop::insert($all_shop_attributes);
+        $message = "共发现".$count."条数据，排除空数据及重复数据后共成功上传".$success_count."条;";
+        $message = $error_message ? $message.$error_message."(请修正信息并单独上传)" : $message;
+        return $this->response->message($message)
             ->status("success")
             ->url(guard_url('shop'))
             ->redirect();

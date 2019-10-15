@@ -24,6 +24,7 @@ return [
     'status' => [
         'normal' => '正常合作',
         'earnest' => '定金发货',
-        'cancel' => '取消合作'
+        'cancel' => '取消合作',
+        'block' => '冻结'
     ],
 ];
