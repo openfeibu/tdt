@@ -160,11 +160,17 @@ class ShopResourceController extends BaseController
    public function handleShopAttributes($attributes)
     {
         $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
-        $attributes = $this->getAttributesByRegeo($map_data);
+        $attributes = $this->getAttributesByRegeo($map_data,$attributes);
 
         return $attributes;
     }
-    public function getAttributesByRegeo($map_data)
+    public function getAttributesByGeo($map_data,$attributes)
+    {
+        $attributes = $this->getAttributesByRegeo($map_data,$attributes);
+
+        return $attributes;
+    }
+    public function getAttributesByRegeo($map_data,$attributes)
     {
         $province_name = $map_data['result']['address_component']['province'] ;
         if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
@@ -354,7 +360,7 @@ class ShopResourceController extends BaseController
                     $attributes['longitude'] = $location['lng'];
                     $attributes['latitude'] = $location['lat'];
 
-                    //$attributes = $this->handleShopAttributes($attributes);
+                    $attributes = $this->getAttributesByGeo($attributes);
                     $all_shop_attributes[] = $attributes;
                     $success_count++;
                 }else{
