@@ -334,9 +334,15 @@ class ShopResourceController extends BaseController
                     $status_arr = trans('shop.status');
 
                     $attributes['status'] = array_search($attributes['status'],$status_arr);
+					if(!$attributes['status'])
+					{
+						$error_message .= "\n第".($i+1)."个表格第".$k."行 状态 无法识别;";
+                        continue;
+					}
                     $map_data = $this->lbs_service->geocode_geo($excel_data[$k]['address']);
                     if(isset($map_data['error']) && $map_data['error'])
                     {
+						var_dump($map_data);exit;
                         $error_message .= "\n第".($i+1)."个表格第".$k."行地理位置无法识别;";
                         continue;
                     }
@@ -345,7 +351,7 @@ class ShopResourceController extends BaseController
                     $attributes['longitude'] = $location['lng'];
                     $attributes['latitude'] = $location['lat'];
 
-                    $attributes = $this->handleShopAttributes($attributes);
+                    //$attributes = $this->handleShopAttributes($attributes);
                     $all_shop_attributes[] = $attributes;
                     $success_count++;
                 }else{
@@ -357,6 +363,9 @@ class ShopResourceController extends BaseController
                 }
             }
         }
+		var_dump($error_message);
+		var_dump($all_shop_attributes);exit;
+		exit;
         Shop::insert($all_shop_attributes);
         $message = "共发现".$count."条数据，排除空数据及重复数据后共成功上传".$success_count."条;";
         $message = $error_message ? $message.$error_message."(请修正信息并单独上传)" : $message;
