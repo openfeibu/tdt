@@ -157,9 +157,15 @@ class ShopResourceController extends BaseController
         }
         return $shop;
     }
-    public function handleShopAttributes($attributes)
+   public function handleShopAttributes($attributes)
     {
         $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
+        $attributes = $this->getAttributesByRegeo($map_data);
+
+        return $attributes;
+    }
+    public function getAttributesByRegeo($map_data)
+    {
         $province_name = $map_data['result']['address_component']['province'] ;
         if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
         {
@@ -184,8 +190,6 @@ class ShopResourceController extends BaseController
             $province = app('area_repository')->where('code',$city->parent_code)->first();
 
         }
-
-
         $attributes['adcode'] = $adcode;
         $attributes['district_name'] = $district_name;
         $attributes['towncode'] = $towncode;
@@ -193,7 +197,6 @@ class ShopResourceController extends BaseController
         $attributes['province_code'] = $province->code;
         $attributes['city_name'] = $city_name;
         $attributes['city_code'] = $city_code;
-
         return $attributes;
     }
     public function show(Request $request,Shop $shop)
