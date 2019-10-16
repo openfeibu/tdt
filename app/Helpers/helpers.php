@@ -800,3 +800,9 @@ if (!function_exists('hmt_code')) {
         return $province_code;
     }
 }
+if(!function_exists('preg_replace_blank')) {
+	function preg_replace_blank($str,$replace='')
+	{
+		return preg_replace('/(\s|\&nbsp\;|　|\xc2\xa0)/',$replace,$str);
+	}
+}

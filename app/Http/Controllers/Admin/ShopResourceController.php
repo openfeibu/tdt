@@ -157,15 +157,9 @@ class ShopResourceController extends BaseController
         }
         return $shop;
     }
-   public function handleShopAttributes($attributes)
+	public function handleShopAttributes($attributes)
     {
         $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
-        $attributes = $this->getAttributesByRegeo($map_data,$attributes);
-
-        return $attributes;
-    }
-    public function getAttributesByGeo($map_data,$attributes)
-    {
         $attributes = $this->getAttributesByRegeo($map_data,$attributes);
 
         return $attributes;
@@ -187,6 +181,41 @@ class ShopResourceController extends BaseController
             $adcode = $map_data['result']['ad_info']['adcode'];
 
             $district_name = $map_data['result']['address_component']['district'];
+            $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
+
+            $district = app('area_repository')->where('code',$adcode)->first();
+            $city = app('area_repository')->where('code',$district->parent_code)->first();
+            $city_name = $city->name;
+            $city_code = $city->code;
+            $province = app('area_repository')->where('code',$city->parent_code)->first();
+
+        }
+        $attributes['adcode'] = $adcode;
+        $attributes['district_name'] = $district_name;
+        $attributes['towncode'] = $towncode;
+        $attributes['province_name'] = $province->name;
+        $attributes['province_code'] = $province->code;
+        $attributes['city_name'] = $city_name;
+        $attributes['city_code'] = $city_code;
+        return $attributes;
+    }
+	public function getAttributesByGeo($map_data,$attributes)
+    {
+        $province_name = $map_data['result']['address_components']['province'] ;
+        if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
+        {
+            $province_code = hmt_code($province_name);
+            $province = app('area_repository')->where('code',$province_code)->first();
+            $city_name = $province_name;
+            $city_code = $province->code;
+            $towncode = '';
+            $district_name = '';
+            $adcode = '';
+        }
+        else{
+            $adcode = $map_data['result']['ad_info']['adcode'];
+
+            $district_name = $map_data['result']['address_components']['district'];
             $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
 
             $district = app('area_repository')->where('code',$adcode)->first();
@@ -277,6 +306,7 @@ class ShopResourceController extends BaseController
     }
     public function import(Request $request)
     {
+	
         return $this->response->title(trans('shop.name'))
             ->view('shop.import')
             ->output();
@@ -286,20 +316,26 @@ class ShopResourceController extends BaseController
         //ini_set("error_reporting","E_ALL & ~E_NOTICE");
         set_time_limit(0);
         $all_res = (new ShopImport())->toArray($request->file);
-        $all_shop_attributes = [];
+        
         $head_key_arr = ['management_region' => '运管区域','name' => '店名' ,'leader' => '负责人','mobile' => '电话','inviter' => '邀约人','first' => '首次','signer' => '签单','address' => '销售区域（门店地址）','cooperation_date' => '合作时间','is_full' => '全款','status' => '状态','postscript' => '备注'];
+		$all_res_count = count($all_res);
         $all_count = 0;
         $all_success_count = 0;
         $all_empty_count = 0;
-        for ($i = 0; $i <=1; $i++)
+		$error_message = "";
+		$all_request_count = 0;
+		$all_shop_attributes = [];
+		$signers = [];
+        for ($i = 0; $i <= $all_res_count-1; $i++)
         {
             $res = $all_res[$i];
             $count = count($res) - 1;
             $success_count = 0;
             $empty_count = 0;
+			$request_count = 0;
             $excel_data = [];
-            $error_message = "";
             foreach ( $res as $k => $v ) {
+				$attributes = [];
                 if(count(array_filter($v)) <= 1)
                 {
                     continue;
@@ -320,6 +356,12 @@ class ShopResourceController extends BaseController
                 {
                     continue;
                 }
+				
+                // if($request_count >= 100)
+                // {
+                    // break;
+                // }
+				// $request_count++;
                 foreach ($head_key_arr as $data_field => $data_value)
                 {
                     if(in_array($data_field,['cooperation_date']) && !empty(trim($v[$keys[$data_field]])))
@@ -348,22 +390,23 @@ class ShopResourceController extends BaseController
                     $attributes['status'] = array_search($attributes['status'],$status_arr);
 					if(!$attributes['status'])
 					{
-						$error_message .= "\n第".($i+1)."个表格第".$k."行 状态 无法识别;";
+						$error_message .= "\n第".($i+1)."个表格第".($k+1)."行 状态 无法识别;";
                         continue;
 					}
                     $map_data = $this->lbs_service->geocode_geo($excel_data[$k]['address']);
                     if(isset($map_data['error']) && $map_data['error'])
                     {
-                        $error_message .= "\n第".($i+1)."个表格第".$k."行地理位置无法识别;";
+                        $error_message .= "\n第".($i+1)."个表格第".($k+1)."行地理位置'".$excel_data[$k]['address']."',".$map_data['message'].";";
                         continue;
                     }
                     $location = $map_data['result']['location'];
 
                     $attributes['longitude'] = $location['lng'];
                     $attributes['latitude'] = $location['lat'];
-
-                    $attributes = $this->getAttributesByGeo($attributes);
+					
+                    $attributes = $this->handleShopAttributes($attributes);
                     $all_shop_attributes[] = $attributes;
+					$signers[] = $attributes['signer'];
                     $success_count++;
                 }else{
                     $empty_count++;
@@ -372,23 +415,19 @@ class ShopResourceController extends BaseController
                         break;
                     }
                 }
-
-                sleep(0.3);
-                if($success_count >= 5)
-                {
-                    break;
-                }
+                
+				sleep(0.2);
             }
 
             $all_count = $all_count + $count;
             $all_empty_count = $all_empty_count + $empty_count;
             $all_success_count = $all_success_count + $success_count;
+			$all_request_count = $all_request_count + $request_count;
         }
-		var_dump($error_message);
-		var_dump($all_shop_attributes);exit;
-		exit;
+
         Shop::insert($all_shop_attributes);
-        $message = "共发现".$count."条数据，排除空数据及重复数据后共成功上传".$success_count."条;";
+		Signer::addSigners($signers);
+        $message = "共发现".$all_count."条数据，排除空数据及重复数据后共成功上传".$all_success_count."条;";
         $message = $error_message ? $message.$error_message."(请修正信息并单独上传)" : $message;
         return $this->response->message($message)
             ->status("success")

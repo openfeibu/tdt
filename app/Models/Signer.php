@@ -31,5 +31,11 @@ class Signer extends BaseModel
         }
         return $signer;
     }
-
+	public static function addSigners($signers)
+	{
+		foreach($signers as $key => $signer)
+		{
+			self::addSigner($signer);
+		}
+	}
 }

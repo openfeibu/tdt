@@ -38,10 +38,9 @@ class LBSService
     }
     public function geocode_geo($address)
     {
-        $url = $this->domain."ws/geocoder/v1/?key=".$this->key."&address=".$address;
+        $url = $this->domain."ws/geocoder/v1/?key=".$this->key."&address=".preg_replace_blank($address,' ');
         $res = $this->client->get($url);
         $data = json_decode($res->getBody()->getContents(),true);
-
         if($data['status'])
         {
             if($this->debug)
