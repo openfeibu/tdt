@@ -288,7 +288,10 @@ class ShopResourceController extends BaseController
         $all_res = (new ShopImport())->toArray($request->file);
         $all_shop_attributes = [];
         $head_key_arr = ['management_region' => '运管区域','name' => '店名' ,'leader' => '负责人','mobile' => '电话','inviter' => '邀约人','first' => '首次','signer' => '签单','address' => '销售区域（门店地址）','cooperation_date' => '合作时间','is_full' => '全款','status' => '状态','postscript' => '备注'];
-        for ($i = 0; $i <=5; $i++)
+        $all_count = 0;
+        $all_success_count = 0;
+        $all_empty_count = 0;
+        for ($i = 0; $i <=1; $i++)
         {
             $res = $all_res[$i];
             $count = count($res) - 1;
@@ -351,7 +354,6 @@ class ShopResourceController extends BaseController
                     $map_data = $this->lbs_service->geocode_geo($excel_data[$k]['address']);
                     if(isset($map_data['error']) && $map_data['error'])
                     {
-						var_dump($map_data);exit;
                         $error_message .= "\n第".($i+1)."个表格第".$k."行地理位置无法识别;";
                         continue;
                     }
@@ -370,7 +372,17 @@ class ShopResourceController extends BaseController
                         break;
                     }
                 }
+
+                sleep(0.3);
+                if($success_count >= 5)
+                {
+                    break;
+                }
             }
+
+            $all_count = $all_count + $count;
+            $all_empty_count = $all_empty_count + $empty_count;
+            $all_success_count = $all_success_count + $success_count;
         }
 		var_dump($error_message);
 		var_dump($all_shop_attributes);exit;
