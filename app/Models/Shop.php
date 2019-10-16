@@ -20,7 +20,7 @@ class Shop extends BaseModel
      */
     protected $config = 'model.shop.shop';
 
-    protected $appends = ['status_desc','is_full_desc'];       // 表里没有的字段
+    protected $appends = ['status_desc','is_full_desc','sn'];       // 表里没有的字段
 
     public function getStatusDescAttribute()
     {
@@ -29,5 +29,9 @@ class Shop extends BaseModel
     public function getIsFullDescAttribute()
     {
         return $this->attributes['is_full'] ? "是" : $this->attributes['price'] ;
+    }
+    public function getSnAttribute()
+    {
+        return 't'.sprintf("%07d", $this->attributes['id']);
     }
 }

@@ -80,6 +80,12 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
+                        <label class="layui-form-label">{{ trans('shop.label.postscript') }}</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="postscript" autocomplete="off" placeholder="请输入{{ trans('shop.label.postscript') }}" class="layui-input" value="{{ $shop['postscript'] }}">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
                         <label class="layui-form-label">经纬度</label>
                         <div class="layui-input-inline">
                             <input type="text" name="longitude" autocomplete="off" placeholder="" class="layui-input" value="{{$shop['longitude']}}" readonly>

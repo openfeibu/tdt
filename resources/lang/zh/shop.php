@@ -3,6 +3,7 @@
 return [
     'name'        => '门店',
     'label'       => [
+        'sn' => '编号',
         'name' => '店名',
         'address' =>  '地址',
         'leader' => '负责人',

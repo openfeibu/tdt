@@ -87,6 +87,7 @@
             ,cols: [[
                 {checkbox: true, fixed: true}
                 ,{field:'id',title:'ID', width:80, sort: true}
+                ,{field:'sn',title:'{{ trans('shop.label.sn') }}'}
                 ,{field:'name',title:'{{ trans('shop.label.name') }}'}
                 //,{field:'image',title:'{{ trans('shop.label.image') }}',toolbar:'#imageTEM'}
                 ,{field:'address',title:'{{ trans('shop.label.address') }}'}
