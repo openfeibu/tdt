@@ -20,6 +20,7 @@ return [
         'city_name' =>  '城市',
         'longitude' =>  '经度',
         'latitude' => '纬度',
+        'postscript' => '备注',
     ],
     'status' => [
         'normal' => '正常合作',
