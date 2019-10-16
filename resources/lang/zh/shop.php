@@ -14,7 +14,7 @@ return [
         'is_full' => '全款',
         'is_full_desc' => '全款',
         'status' => '状态',
-        'status_desc' => '备注',
+        'status_desc' => '状态',
         'contract_date' => '合同签约',
         'province_name' => '运管区域',
         'city_name' =>  '城市',

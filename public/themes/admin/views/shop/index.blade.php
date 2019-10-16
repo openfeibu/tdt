@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">{{ trans('shop.label.status_desc') }}</label>
+                    <label class="layui-form-label">{{ trans('shop.label.status') }}</label>
                     <div class="layui-input-inline">
                         <select name="status" class="search_key">
                             <option value="">全部</option>
