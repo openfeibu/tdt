@@ -63,12 +63,14 @@
                             <input type="text" name="price" autocomplete="off" placeholder="非全款请输入{{ trans('app.price') }}" class="layui-input" value="{{ $shop['price'] }}">
                         </div>
                     </div>
+                    <!--
                     <div class="layui-form-item">
                         <label class="layui-form-label">{{ trans('shop.label.contract_date') }}</label>
                         <div class="layui-input-inline">
                             <input type="text" name="contract_date" lay-verify="required" autocomplete="off" placeholder="请输入{{ trans('shop.label.contract_date') }}" class="layui-input" id="contract_date" value="{{ $shop['contract_date'] }}">
                         </div>
                     </div>
+                    -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">{{ trans('shop.label.status') }}</label>
                         <div class="layui-input-inline">
