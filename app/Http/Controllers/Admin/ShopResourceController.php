@@ -318,7 +318,7 @@ class ShopResourceController extends BaseController
         $all_res = (new ShopImport())->toArray($request->file);
         
         $head_key_arr = ['management_region' => '运管区域','name' => '店名' ,'leader' => '负责人','mobile' => '电话','inviter' => '邀约人','first' => '首次','signer' => '签单','address' => '销售区域（门店地址）','cooperation_date' => '合作时间','is_full' => '全款','status' => '状态','postscript' => '备注'];
-		$all_res_count = count($all_res);
+		$all_sheet_count = count($all_res);
         $all_count = 0;
         $all_success_count = 0;
         $all_empty_count = 0;
@@ -326,10 +326,10 @@ class ShopResourceController extends BaseController
 		$all_request_count = 0;
 		$all_shop_attributes = [];
 		$signers = [];
-        for ($i = 0; $i <= $all_res_count-1; $i++)
+        for ($i = 0; $i <= $all_sheet_count-1; $i++)
         {
             $res = $all_res[$i];
-            $count = count($res) - 1;
+            $count = 0;
             $success_count = 0;
             $empty_count = 0;
 			$request_count = 0;
@@ -356,7 +356,7 @@ class ShopResourceController extends BaseController
                 {
                     continue;
                 }
-				
+                $count++;
                 // if($request_count >= 100)
                 // {
                     // break;
