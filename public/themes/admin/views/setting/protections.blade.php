@@ -11,7 +11,7 @@
                 <form class="layui-form" action="{{guard_url('setting/updateProtections')}}" method="post" lay-filter="fb-form">
                     @foreach($protections as $key => $argument)
                     <div class="layui-form-item">
-                        <label class="layui-form-label">{{ $argument['title'] }}（公里）：</label>
+                        <label class="layui-form-label" style="width:180px">{{ $argument['title'] }}（公里）：</label>
                         <div class="layui-input-inline">
                             <input type="text" name="{{ $argument['slug'] }}" lay-verify="number" autocomplete="off" placeholder="请输入{{ $argument['title'] }}" class="layui-input" value="{{$argument['value']}}">
                         </div>

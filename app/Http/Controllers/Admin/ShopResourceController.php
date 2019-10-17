@@ -171,6 +171,8 @@ class ShopResourceController extends BaseController
         {
             $province_code = hmt_code($province_name);
             $province = app('area_repository')->where('code',$province_code)->first();
+			$province_code = $province->code;
+			$province_name = $province->name;
             $city_name = $province_name;
             $city_code = $province->code;
             $towncode = '';
@@ -188,13 +190,22 @@ class ShopResourceController extends BaseController
             $city_name = $city->name;
             $city_code = $city->code;
             $province = app('area_repository')->where('code',$city->parent_code)->first();
-
+			$province_code = $province->code;
+			$province_name = $province->name;
+			if($province->code == 100000)
+			{
+				$city_code = $district->code;
+				$city_name = $district->name;
+				$province_code = $city->code;
+				$province_name = $city->name;
+			}
         }
+		
         $attributes['adcode'] = $adcode;
         $attributes['district_name'] = $district_name;
         $attributes['towncode'] = $towncode;
-        $attributes['province_name'] = $province->name;
-        $attributes['province_code'] = $province->code;
+        $attributes['province_name'] = $province_name;
+        $attributes['province_code'] = $province_code;
         $attributes['city_name'] = $city_name;
         $attributes['city_code'] = $city_code;
         return $attributes;
@@ -251,41 +262,9 @@ class ShopResourceController extends BaseController
         try {
             $attributes = $request->all();
             $this->lbs_service->debug = false;
-            $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
-            $province_name = $map_data['result']['address_component']['province'] ;
-            if(strstr($province_name,'香港') || strstr($province_name,'澳门') || strstr($province_name,'台湾'))
-            {
-                $province_code = hmt_code($province_name);
-                $province = app('area_repository')->where('code',$province_code)->first();
-                $city_name = $province_name;
-                $city_code = $province->code;
-                $towncode = '';
-                $district_name = '';
-                $adcode = '';
-            }
-            else{
-                $adcode = $map_data['result']['ad_info']['adcode'];
-
-                $district_name = $map_data['result']['address_component']['district'];
-                $towncode = $map_data['result']['address_reference']['town']['id'] ?? '' ;
-
-                $district = app('area_repository')->where('code',$adcode)->first();
-                $city = app('area_repository')->where('code',$district->parent_code)->first();
-                $city_name = $city->name;
-                $city_code = $city->code;
-                $province = app('area_repository')->where('code',$city->parent_code)->first();
-
-            }
-
-
-            $attributes['adcode'] = $adcode;
-            $attributes['district_name'] = $district_name;
-            $attributes['towncode'] = $towncode;
-            $attributes['province_name'] = $province->name;
-            $attributes['province_code'] = $province->code;
-            $attributes['city_name'] = $city_name;
-            $attributes['city_code'] = $city_code;
-
+			
+            $attributes = $this->handleShopAttributes($attributes);
+			
             $shop->update($attributes);
             if(isset($attributes['singer']) && $attributes['singer'])
             {
@@ -306,7 +285,7 @@ class ShopResourceController extends BaseController
     }
     public function import(Request $request)
     {
-	
+		
         return $this->response->title(trans('shop.name'))
             ->view('shop.import')
             ->output();
@@ -340,7 +319,7 @@ class ShopResourceController extends BaseController
                 {
                     continue;
                 }
-                if($k==0 || $k==1)
+                if(!isset($keys) && ($k==0 || $k==1))
                 {
                     $keys = [];
                     foreach ($v as $head_k => $head_v)
@@ -362,6 +341,7 @@ class ShopResourceController extends BaseController
                     // break;
                 // }
 				// $request_count++;
+
                 foreach ($head_key_arr as $data_field => $data_value)
                 {
                     if(in_array($data_field,['cooperation_date']) && !empty(trim($v[$keys[$data_field]])))
@@ -425,7 +405,9 @@ class ShopResourceController extends BaseController
             $all_success_count = $all_success_count + $success_count;
 			$all_request_count = $all_request_count + $request_count;
         }
-
+		 // var_dump($error_message);
+		 // var_dump($all_shop_attributes);
+		 // exit;
         Shop::insert($all_shop_attributes);
 		Signer::addSigners($signers);
         $message = "共发现".$all_count."条数据，排除空数据及重复数据后共成功上传".$all_success_count."条;";
