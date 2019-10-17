@@ -8,6 +8,7 @@
     </div>
     <div class="main_full">
         <div class="layui-col-md12">
+            {!! Theme::partial('message') !!}
             <div class="fb-main-table">
                 <form class="layui-form" action="{{guard_url('role/'.$role->id)}}" method="POST" lay-filter="fb-form">
                     <div class="layui-form-item">
