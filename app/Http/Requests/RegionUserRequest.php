@@ -22,7 +22,7 @@ class RegionUserRequest extends FormRequest
         if ($this->isStore()) {
             return [
                 'name' => 'required|string',
-                'phone' => 'required|unique:provider_users',
+                'phone' => 'required|unique:region_users',
                 'password' => 'required|string|min:6',
             ];
         }
@@ -31,7 +31,7 @@ class RegionUserRequest extends FormRequest
             return [
                 'phone' => [
                     'filled',
-                    Rule::unique('provider_users')->where(function($query)use($input){
+                    Rule::unique('region_users')->where(function($query)use($input){
                         return $query->where('id','<>',$input['id']);
                     })
                 ],
