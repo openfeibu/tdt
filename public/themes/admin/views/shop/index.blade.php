@@ -20,33 +20,33 @@
         </div>
         <div class="layui-col-md12 mt10">
             <div class="tabel-message  layui-form">
-                <div class="layui-inline">
-                    <label class="layui-form-label">{{ trans('shop.label.province_name') }}</label>
+                <div class="layui-inline mt10">
+                   <!-- <label class="layui-form-label">{{ trans('shop.label.province_name') }}</label>-->
                     <div class="layui-input-inline">
                         <select name="province_code" class="search_key">
-                            <option value="">全部</option>
+                            <option value="">所有区域</option>
                             @foreach(app('area_repository')->getProvinces() as $key => $province)
                                 <option value="{{ $province['code'] }}">{{ $province['capital'] }} {{ $province['name'] }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">{{ trans('shop.label.status') }}</label>
+                <div class="layui-inline mt10">
+                    <!--<label class="layui-form-label">{{ trans('shop.label.status') }}</label>-->
                     <div class="layui-input-inline">
                         <select name="status" class="search_key">
-                            <option value="">全部</option>
+                            <option value="">所有状态</option>
                             @foreach(config('model.shop.shop.status') as $status)
                                 <option value="{{ $status }}">{{ trans('shop.status.'.$status) }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">{!! trans('shop.label.signer')!!}</label>
+                <div class="layui-inline mt10">
+                    <!--<label class="layui-form-label">{!! trans('shop.label.signer')!!}</label>-->
                     <div class="layui-input-inline">
                         <select name="signer" class="search_key">
-                            <option value="">全部</option>
+                            <option value="">所有签单人</option>
                             @foreach($signers as $key => $signer)
                                 <option value="{{ $signer['name'] }}">{{ $signer['name'] }}</option>
                             @endforeach
@@ -54,16 +54,16 @@
                     </div>
                 </div>
 
-                <div class="layui-inline">
+                <div class="layui-inline mt10">
                     <input class="layui-input search_key" name="sn" placeholder="编号" autocomplete="off">
                 </div>
 
-                <div class="layui-inline">
+                <div class="layui-inline mt10">
                     <input class="layui-input search_key" name="name" placeholder="门店名称" autocomplete="off">
                 </div>
 
 
-                <button class="layui-btn" data-type="reload">搜索</button>
+                <button class="layui-btn mt10" data-type="reload">搜索</button>
             </div>
         </div>
         <div class="layui-col-md12">
