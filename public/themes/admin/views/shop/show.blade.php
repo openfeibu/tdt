@@ -26,7 +26,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">{{ trans('shop.label.mobile') }}</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="mobile" lay-verify="required" autocomplete="off" placeholder="请输入{{ trans('shop.label.mobile') }}" class="layui-input"  value="{{ $shop['name'] }}">
+                            <input type="text" name="mobile" lay-verify="required" autocomplete="off" placeholder="请输入{{ trans('shop.label.mobile') }}" class="layui-input"  value="{{ $shop['mobile'] }}">
                         </div>
                     </div>
                     <div class="layui-form-item">
