@@ -45,11 +45,7 @@ class ResourceController extends BaseController
         $new_shop_count = Shop::where('cooperation_date','>=',date('Y-m-d',strtotime("-1 month")))->count();
 
         $regions = Region::get();
-        foreach ($regions as $key => $region)
-        {
-            $area_code_arr = app(RegionArea::class)->getRegionAreaCodes($region->id);
-            $region->shop_count = Shop::whereIn('province_code',$area_code_arr)->count();
-        }
+
         return $this->response->title(trans('app.admin.panel'))
             ->view('home')
             ->data(compact('shop_count','normal_shop_count','earnest_shop_count','cancel_shop_count','block_shop_count','new_shop_count','user_count','regions'))
