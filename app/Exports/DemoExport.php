@@ -23,6 +23,8 @@ class DemoExport implements FromCollection,WithEvents
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 // 定义列宽度
+                $event->sheet->getDelegate()->getStyle('A:Z')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
                 $widths = ['A' => 15, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 15, 'G' => 15, 'H' => 50, 'I' => 15, 'J' => 15,'K' => 15,'L' => 15];
                    foreach ($widths as $k => $v) {
                        // 设置列宽度
