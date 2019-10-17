@@ -359,7 +359,7 @@ class ShopResourceController extends BaseController
                 {
                     $attributes['name'] = $attributes['name'] ? $attributes['name'] : '头道汤';
                     $attributes['price'] = '';
-                    if($attributes['is_full'] != "是")
+                    if($attributes['is_full'] != "是" && !empty($attributes['is_full']))
                     {
                         $attributes['price'] = $attributes['is_full'];
                         $attributes['is_full'] = 0;
