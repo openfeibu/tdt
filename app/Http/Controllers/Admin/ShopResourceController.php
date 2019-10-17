@@ -83,7 +83,15 @@ class ShopResourceController extends BaseController
         $search_signer = isset($search['signer']) ? $search['signer'] : '';
         $search_province_code = isset($search['province_code']) ? $search['province_code'] : '';
         $search_status = isset($search['status']) ? $search['status'] : '';
+        $search_sn = isset($search['sn']) ? $search['sn'] : '';
 
+        if($search_sn)
+        {
+            $id = ltrim(ltrim($search_sn,'t'),'0');
+            $shops = $shops->where(function ($query) use ($id){
+                return $query->where('id',$id);
+            });
+        }
         if($search_name)
         {
             $shops = $shops->where(function ($query) use ($search_name){

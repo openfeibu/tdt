@@ -51,7 +51,9 @@
                         </select>
                     </div>
                 </div>
-
+                <div class="layui-inline">
+                    <input class="layui-input search_key" name="sn" placeholder="编号" autocomplete="off">
+                </div>
                 <div class="layui-inline">
                     <input class="layui-input search_key" name="name" placeholder="门店名称" autocomplete="off">
                 </div>
@@ -85,6 +87,7 @@
             ,cols: [[
                 //{checkbox: true, fixed: true}
                 {field:'id',title:'ID', width:80, sort: true}
+                ,{field:'sn',title:'{{ trans('shop.label.sn') }}'}
                 ,{field:'name',title:'{{ trans('shop.label.name') }}'}
                 //,{field:'image',title:'{{ trans('shop.label.image') }}',toolbar:'#imageTEM'}
                 ,{field:'address',title:'{{ trans('shop.label.address') }}'}
