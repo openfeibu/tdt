@@ -27,9 +27,7 @@ Route::group([
     Route::resource('banner', 'BannerResourceController');
     Route::post('/banner/destroyAll', 'BannerResourceController@destroyAll');
 
-    Route::resource('news', 'NewsResourceController');
-    Route::post('/news/destroyAll', 'NewsResourceController@destroyAll')->name('news.destroy_all');
-    Route::post('/news/updateRecommend', 'NewsResourceController@updateRecommend')->name('news.update_recommend');
+
     Route::resource('system_page', 'SystemPageResourceController');
     Route::post('/system_page/destroyAll', 'SystemPageResourceController@destroyAll')->name('system_page.destroy_all');
     Route::get('/setting/company', 'SettingResourceController@company')->name('setting.company.index');
@@ -53,12 +51,6 @@ Route::group([
         Route::get('index', 'MenuResourceController@index');
     });
 
-    Route::group(['prefix' => 'nav','as' => 'nav.'], function ($router) {
-        Route::resource('nav', 'NavResourceController');
-        Route::post('/nav/destroyAll', 'NavResourceController@destroyAll')->name('nav.destroy_all');
-        Route::resource('category', 'NavCategoryResourceController');
-        Route::post('/category/destroyAll', 'NavCategoryResourceController@destroyAll')->name('category.destroy_all');
-    });
 
     Route::post('/upload/{config}/{path?}', 'UploadController@upload')->where('path', '(.*)');
 
@@ -86,24 +78,6 @@ Route::group([
 
     Route::post('/shop_submit_import', 'ShopResourceController@submitImport')->name('shop.submit_import');
 });
-Route::group([
-    'namespace' => 'Pc',
-    'as' => 'pc.',
-], function () {
-    Auth::routes();
-    Route::get('/user/login','Auth\LoginController@showLoginForm');
-    Route::get('/','HomeController@home')->name('home');
-
-
-    Route::get('email-verification/index','Auth\EmailVerificationController@getVerificationIndex')->name('email-verification.index');
-    Route::get('email-verification/error','Auth\EmailVerificationController@getVerificationError')->name('email-verification.error');
-    Route::get('email-verification/check/{token}', 'Auth\EmailVerificationController@getVerification')->name('email-verification.check');
-    Route::get('email-verification-required', 'Auth\EmailVerificationController@required')->name('email-verification.required');
-
-    Route::get('verify/send', 'Auth\LoginController@sendVerification');
-    Route::get('verify/{code?}', 'Auth\LoginController@verify');
-
-});
 
 Route::group([
     'namespace' => 'Region',
@@ -123,16 +97,12 @@ Route::group([
     Route::resource('user', 'UserResourceController');
     Route::post('/user/destroyAll', 'UserResourceController@destroyAll')->name('user.destroy_all');
 
-
-    Route::resource('region_user', 'RegionUserResourceController');
-    Route::post('/region_user/destroyAll', 'RegionUserResourceController@destroyAll')->name('region_user.destroy_all');
-
     Route::resource('permission', 'PermissionResourceController');
     Route::post('/permission/destroyAll', 'PermissionResourceController@destroyAll')->name('permission.destroy_all');
     Route::resource('role', 'RoleResourceController');
     Route::post('/role/destroyAll', 'RoleResourceController@destroyAll')->name('role.destroy_all');
 
-    Route::post('/upload/{config}/{path?}', 'UploadController@upload')->where('path', '(.*)');
+    //Route::post('/upload/{config}/{path?}', 'UploadController@upload')->where('path', '(.*)');
 });
 
 //Route::get('
@@ -148,5 +118,26 @@ Route::group(
 
     Route::resource('menu', 'MenuResourceController');
    // Route::resource('submenu', 'SubMenuResourceController');
+});
+*/
+
+/*
+Route::group([
+    'namespace' => 'Pc',
+    'as' => 'pc.',
+], function () {
+    Auth::routes();
+    Route::get('/user/login','Auth\LoginController@showLoginForm');
+    Route::get('/','HomeController@home')->name('home');
+
+
+    Route::get('email-verification/index','Auth\EmailVerificationController@getVerificationIndex')->name('email-verification.index');
+    Route::get('email-verification/error','Auth\EmailVerificationController@getVerificationError')->name('email-verification.error');
+    Route::get('email-verification/check/{token}', 'Auth\EmailVerificationController@getVerification')->name('email-verification.check');
+    Route::get('email-verification-required', 'Auth\EmailVerificationController@required')->name('email-verification.required');
+
+    Route::get('verify/send', 'Auth\LoginController@sendVerification');
+    Route::get('verify/{code?}', 'Auth\LoginController@verify');
+
 });
 */
