@@ -142,7 +142,7 @@ class RegionResourceController extends BaseController
                 $role_id = RegionRole::where('slug','superuser')->value('id');
                 $region_user->roles()->sync([$role_id]);
             }
-
+            Region::updateShopCount($region->id);
             return $this->response->message(trans('messages.success.created', ['Module' => trans('region.name')]))
                 ->code(0)
                 ->status('success')
@@ -191,7 +191,7 @@ class RegionResourceController extends BaseController
                 }
                 $region_areas ? RegionArea::insert($region_areas) : [];
             }
-
+            Region::updateShopCount($region->id);
             return $this->response->message(trans('messages.success.updated', ['Module' => trans('region.name')]))
                 ->code(0)
                 ->status('success')

@@ -20,4 +20,11 @@ class Region extends BaseModel
      */
     protected $config = 'model.region.region';
 
+    public static function updateShopCount($id)
+    {
+        $area_code_arr = app(RegionArea::class)->getRegionAreaCodes($id);
+        $shop_count = Shop::whereIn('province_code',$area_code_arr)->count();
+        self::where('id',$id)->update(['shop_count' => $shop_count]);
+    }
+
 }

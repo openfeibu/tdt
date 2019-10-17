@@ -18,13 +18,13 @@
 								<li class="layui-col-xs4">
                                     <a lay-href="" class="fb-backlog-body">
                                         <h3>新店数量</h3>
-                                        <p><cite>000</cite></p>
+                                        <p><cite>{{ $new_shop_count }}</cite></p>
                                     </a>
                                 </li>
 								<li class="layui-col-xs4">
                                     <a lay-href="" class="fb-backlog-body">
                                         <h3>用户量</h3>
-                                        <p><cite>000</cite></p>
+                                        <p><cite>{{ $user_count }}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-xs4">
@@ -46,7 +46,12 @@
                                         <p><cite>{{ $cancel_shop_count }}</cite></p>
                                     </a>
                                 </li>
-								
+                                <li class="layui-col-xs4">
+                                    <a lay-href="" class="fb-backlog-body">
+                                        <h3>冻结门店</h3>
+                                        <p><cite>{{ $block_shop_count }}</cite></p>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -59,43 +64,14 @@
 					<div class="fb-carousel fb-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" >
                         <div carousel-item="">
                             <ul class="layui-row fb-clearfix dataBox layui-col-space30">
+                                @foreach($regions as $key => $region)
                                 <li class="layui-col-xs4">
                                     <a lay-href="" class="fb-backlog-body">
-                                        <h3>第一区域</h3>
-                                        <p><cite>{{ $shop_count }}</cite></p>
+                                        <h3>{{ $region['name'] }}</h3>
+                                        <p><cite>{{ $region['shop_count'] }}</cite></p>
                                     </a>
                                 </li>
-                                <li class="layui-col-xs4">
-                                    <a lay-href="" class="fb-backlog-body">
-                                        <h3>第二区域</h3>
-                                        <p><cite>{{ $normal_shop_count }}</cite></p>
-                                    </a>
-                                </li>
-
-                                <li class="layui-col-xs4">
-                                    <a lay-href="" class="fb-backlog-body">
-                                        <h3>第三区域</h3>
-                                        <p><cite>{{ $earnest_shop_count }}</cite></p>
-                                    </a>
-                                </li>
-                                <li class="layui-col-xs4">
-                                    <a lay-href="" class="fb-backlog-body">
-                                        <h3>第四区域</h3>
-                                        <p><cite>{{ $cancel_shop_count }}</cite></p>
-                                    </a>
-                                </li>
-								<li class="layui-col-xs4">
-                                    <a lay-href="" class="fb-backlog-body">
-                                        <h3>第五区域</h3>
-                                        <p><cite>000</cite></p>
-                                    </a>
-                                </li>
-								<li class="layui-col-xs4">
-                                    <a lay-href="" class="fb-backlog-body">
-                                        <h3>第六区域</h3>
-                                        <p><cite>000</cite></p>
-                                    </a>
-                                </li>
+                                @endforeach
                             </ul>
                         </div>
                     </div>
