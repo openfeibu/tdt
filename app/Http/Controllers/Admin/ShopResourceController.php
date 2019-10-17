@@ -95,7 +95,7 @@ class ShopResourceController extends BaseController
         if($search_name)
         {
             $shops = $shops->where(function ($query) use ($search_name){
-                return $query->where('name','like','%'.$search_name.'%');
+                return $query->where('name','like','%'.$search_name.'%')->orWhere('leader','like','%'.$search_name.'%');
             });
         }
         if($search_signer)
