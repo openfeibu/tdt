@@ -41,10 +41,16 @@ class ResourceController extends BaseController
         $region_id = Auth::user()->region_id;
         $area_code_arr = app(RegionArea::class)->getRegionAreaCodes($region_id);
         $shop_count = Shop::whereIn('province_code',$area_code_arr)->count();
-        
+
+        $normal_shop_count = Shop::where('status','normal')->whereIn('province_code',$area_code_arr)->count();
+        $earnest_shop_count = Shop::where('status','earnest')->whereIn('province_code',$area_code_arr)->count();
+        $cancel_shop_count = Shop::where('status','cancel')->whereIn('province_code',$area_code_arr)->count();
+        $block_shop_count = Shop::where('status','block')->whereIn('province_code',$area_code_arr)->count();
+        $new_shop_count = Shop::where('cooperation_date','>=',date('Y-m-d',strtotime("-1 month")))->whereIn('province_code',$area_code_arr)->count();
+
         return $this->response->title(trans('app.admin.panel'))
             ->view('home')
-            ->data(compact('shop_count'))
+            ->data(compact('shop_count','normal_shop_count','earnest_shop_count','cancel_shop_count','block_shop_count','new_shop_count'))
             ->output();
     }
     public function dashboard()
