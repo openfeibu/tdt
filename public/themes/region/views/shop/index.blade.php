@@ -98,10 +98,10 @@
                 ,{field:'inviter',title:'{{ trans('shop.label.inviter') }}'}
                 ,{field:'first',title:'{{ trans('shop.label.first') }}',width:60}
                 ,{field:'signer',title:'{{ trans('shop.label.signer') }}'}
-                ,{field:'cooperation_date',title:'{{ trans('shop.label.cooperation_date') }}'}
                 ,{field:'is_full_desc',title:'{{ trans('shop.label.is_full') }}'}
                 ,{field:'contract_date',title:'{{ trans('shop.label.contract_date') }}'}
                 ,{field:'status_desc',title:'{{ trans('shop.label.status') }}'}
+                ,{field:'postscript',title:'{{ trans('shop.label.postscript') }}'}
                 //,{field:'created_at',title:'{{ trans('app.created_at') }}'}
                // ,{field:'score',title:'操作', width:150, align: 'right',toolbar:'#barDemo'}
             ]]
