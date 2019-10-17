@@ -59,6 +59,7 @@
                 <div class="layui-inline mt10">
                     <input class="layui-input search_key" name="name" placeholder="门店名称/负责人" autocomplete="off">
                 </div>
+
                 <button class="layui-btn" data-type="reload">搜索</button>
             </div>
         </div>
