@@ -71,8 +71,7 @@
     </div>
 </div>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-sm" lay-event="edit">查看</a>
 </script>
 <script type="text/html" id="imageTEM">
     <img src="@{{d.image}}" alt="" height="28">
@@ -104,7 +103,7 @@
                 ,{field:'status_desc',title:'{{ trans('shop.label.status') }}'}
                 ,{field:'postscript',title:'{{ trans('shop.label.postscript') }}'}
                 //,{field:'created_at',title:'{{ trans('app.created_at') }}'}
-               // ,{field:'score',title:'操作', width:150, align: 'right',toolbar:'#barDemo'}
+                ,{field:'score',title:'操作', width:150, align: 'right',toolbar:'#barDemo'}
             ]]
             ,id: 'fb-table'
             ,page: true
