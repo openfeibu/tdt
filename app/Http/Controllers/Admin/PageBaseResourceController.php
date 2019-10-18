@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\ResourceController as BaseController;
 use App\Models\Page;
 use App\Repositories\Eloquent\PageRepositoryInterface;
 use App\Repositories\Eloquent\PageCategoryRepositoryInterface;
-use App\Http\Requests\PageRequest;
+use Illuminate\Http\Request;
 use Mockery\CountValidator\Exception;
 
 /**
@@ -28,7 +28,7 @@ class PageBaseResourceController extends BaseController
         $this->category_repository = $category_repository;
         $this->category_slug = $this->main_url = '';
     }
-    public function index(PageRequest $request){
+    public function index(Request $request){
         $limit = $request->input('limit',config('app.limit'));
 
         $childs = $this->category_repository->where(['parent_id' => $this->category_id])->all(['id'])->toArray();
@@ -55,7 +55,7 @@ class PageBaseResourceController extends BaseController
             ->view($this->category_slug.'.index')
             ->output();
     }
-    public function create(PageRequest $request)
+    public function create(Request $request)
     {
         $page = $this->repository->newInstance([]);
 
@@ -66,7 +66,7 @@ class PageBaseResourceController extends BaseController
             ->data(compact('page','category_childs'))
             ->output();
     }
-    public function store(PageRequest $request)
+    public function store(Request $request)
     {
         try {
             $attributes = $request->all();
@@ -88,7 +88,7 @@ class PageBaseResourceController extends BaseController
                 ->redirect();
         }
     }
-    public function show(PageRequest $request,Page $page)
+    public function show(Request $request,Page $page)
     {
         if ($page->exists) {
             $view = $this->category_slug.'.show';
@@ -103,7 +103,7 @@ class PageBaseResourceController extends BaseController
             ->view($view)
             ->output();
     }
-    public function update(PageRequest $request,Page $page)
+    public function update(Request $request,Page $page)
     {
         try {
             $attributes = $request->all();
@@ -124,7 +124,7 @@ class PageBaseResourceController extends BaseController
                 ->redirect();
         }
     }
-    public function destroy(PageRequest $request,Page $page)
+    public function destroy(Request $request,Page $page)
     {
         try {
             $this->repository->forceDelete([$page->id]);
@@ -144,7 +144,7 @@ class PageBaseResourceController extends BaseController
                 ->redirect();
         }
     }
-    public function destroyAll(PageRequest $request)
+    public function destroyAll(Request $request)
     {
         try {
             $data = $request->all();
@@ -166,7 +166,7 @@ class PageBaseResourceController extends BaseController
                 ->redirect();
         }
     }
-    public function updateRecommend(PageRequest $request)
+    public function updateRecommend(Request $request)
     {
         $attributes = $request->all();
         $data['recommend_type'] = isset($attributes['home_recommend']) && $attributes['home_recommend'] == "true" ? 'home' : "";

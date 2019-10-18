@@ -13,9 +13,11 @@
                     @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.create'))
                     <button class="layui-btn layui-btn-warm "><a href="{{ url('/admin/shop/create') }}">添加{{ trans('shop.name') }}</a></button>
                     @endif
+                    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.export'))
                     <button class="layui-btn layui-btn-normal export-shop">
                         <i class="layui-icon">&#xe601;</i> 导出筛选
                     </button>
+                    @endif
                     @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.destroy'))
                     <button class="layui-btn layui-btn-primary" data-type="del" data-events="del">删除</button>
                     @endif

@@ -34,15 +34,15 @@ class SystemPageResourceController extends BaseController
             ->pushCriteria(\App\Repositories\Criteria\RequestCriteria::class)
             ->pushCriteria(\App\Repositories\Criteria\PageResourceCriteria::class);
     }
-    public function show(PageRequest $request,Page $system_page)
+    public function show(Request $request,Page $system_page)
     {
         return parent::show($request,$system_page);
     }
-    public function update(PageRequest $request,Page $system_page)
+    public function update(Request $request,Page $system_page)
     {
         return parent::update($request,$system_page);
     }
-    public function destroy(PageRequest $request,Page $system_page)
+    public function destroy(Request $request,Page $system_page)
     {
         return parent::destroy($request,$system_page);
     }
