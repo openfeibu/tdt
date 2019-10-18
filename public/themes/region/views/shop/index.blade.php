@@ -103,7 +103,7 @@
                 ,{field:'status_desc',title:'{{ trans('shop.label.status') }}'}
                 ,{field:'postscript',title:'{{ trans('shop.label.postscript') }}'}
                 //,{field:'created_at',title:'{{ trans('app.created_at') }}'}
-                ,{field:'score',title:'操作', width:150, align: 'right',toolbar:'#barDemo'}
+                ,{field:'score',title:'操作', width:75, align: 'right',toolbar:'#barDemo'}
             ]]
             ,id: 'fb-table'
             ,page: true
