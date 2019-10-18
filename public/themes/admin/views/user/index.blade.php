@@ -10,8 +10,12 @@
             {!! Theme::partial('message') !!}
             <div class="tabel-message">
                 <div class="layui-inline tabel-btn">
+                    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('user.create'))
                     <button class="layui-btn layui-btn-warm "><a href="{{guard_url('user/create')}}">添加{{ trans("user.name") }}</a></button>
+                    @endif
+                    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('user.destroy'))
                     <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
+                    @endif
                 </div>
                 <div class="layui-inline">
                     <input class="layui-input search_key" name="search_name" id="demoReload" placeholder="手机号码/姓名" autocomplete="off">
@@ -27,8 +31,12 @@
 </div>
 
 <script type="text/html" id="barDemo">
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('user.show'))
     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+    @endif
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('user.destroy'))
     <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+    @endif
 </script>
 <script type="text/html" id="imageTEM">
     <img src="@{{d.avatar_url}}" alt="" height="28">
@@ -38,6 +46,13 @@
 <script>
     var main_url = "{{guard_url('user')}}";
     var delete_all_url = "{{guard_url('user/destroyAll')}}";
+    var width = 0;
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('user.show'))
+        width = width + 75;
+    @endif
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('user.destroy'))
+        width = width + 75;
+    @endif
     layui.use(['jquery','element','table'], function(){
         var table = layui.table;
         var form = layui.form;
@@ -52,7 +67,7 @@
                 ,{field:'avatar',title:'{!! trans('user.label.avatar_url')!!}',toolbar:'#imageTEM'}
                 ,{field:'phone',title:'{!! trans('user.label.phone')!!}'}
                 {{--,{field:'wechat',title:'{!! trans('user.label.wechat')!!}',edit:'text'}--}}
-                ,{field:'score',title:'操作', width:200, align: 'right',toolbar:'#barDemo'}
+                ,{field:'score',title:'操作', width:width, align: 'right',toolbar:'#barDemo'}
             ]]
             ,id: 'fb-table'
             ,page: true

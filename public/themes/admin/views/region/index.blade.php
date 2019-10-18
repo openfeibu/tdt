@@ -9,8 +9,12 @@
         <div class="layui-col-md12">
             <div class="tabel-message">
                 <div class="layui-inline tabel-btn">
+                    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('region.create'))
                     <button class="layui-btn layui-btn-warm "><a href="{{ url('/admin/region/create') }}">添加{{ trans('region.name') }}</a></button>
+                    @endif
+                    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('region.destroy'))
                     <button class="layui-btn layui-btn-primary " data-type="del" data-events="del">删除</button>
+                    @endif
                 </div>
             </div>
 
@@ -21,8 +25,12 @@
     </div>
 </div>
 <script type="text/html" id="barDemo">
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('region.show'))
     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+    @endif
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('region.destroy'))
     <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+    @endif
 </script>
 <script type="text/html" id="qrcodeTEM">
     <a href="/image/download/@{{d.qrcode}}"><img src="/image/original/@{{d.qrcode}}" alt="" height="28">
@@ -30,6 +38,13 @@
 <script>
     var main_url = "{{guard_url('region')}}";
     var delete_all_url = "{{guard_url('region/destroyAll')}}";
+    var width = 0;
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.show'))
+        width = width + 75;
+    @endif
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.destroy'))
+        width = width + 75;
+    @endif
     layui.use(['jquery','element','table'], function(){
         var $ = layui.$;
         var table = layui.table;
@@ -47,7 +62,7 @@
                 ,{field:'wechat',title:'{{ trans('region.label.wechat') }}',edit:'text'}
                 ,{field:'area_names',title:'{{ trans('region.label.region_area') }}'}
                 ,{field:'created_at',title:'{{ trans('app.created_at') }}'}
-                ,{field:'score',title:'操作', width:200, align: 'right',toolbar:'#barDemo'}
+                ,{field:'score',title:'操作', width:width, align: 'right',toolbar:'#barDemo'}
             ]]
             ,id: 'fb-table'
             ,page: true

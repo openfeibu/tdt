@@ -10,11 +10,15 @@
             {!! Theme::partial('message') !!}
             <div class="tabel-message  layui-form">
                 <div class="layui-inline tabel-btn">
+                    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.create'))
                     <button class="layui-btn layui-btn-warm "><a href="{{ url('/admin/shop/create') }}">添加{{ trans('shop.name') }}</a></button>
+                    @endif
                     <button class="layui-btn layui-btn-normal export-shop">
                         <i class="layui-icon">&#xe601;</i> 导出筛选
                     </button>
+                    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.destroy'))
                     <button class="layui-btn layui-btn-primary" data-type="del" data-events="del">删除</button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -74,8 +78,12 @@
     </div>
 </div>
 <script type="text/html" id="barDemo">
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.show'))
     <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+    @endif
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.destroy'))
     <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+    @endif
 </script>
 <script type="text/html" id="imageTEM">
     <img src="@{{d.image}}" alt="" height="28">
@@ -83,6 +91,13 @@
 <script>
     var main_url = "{{guard_url('shop')}}";
     var delete_all_url = "{{guard_url('shop/destroyAll')}}";
+    var width = 0;
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.show'))
+    width = width + 75;
+    @endif
+    @if(Auth::user()->isSuperuser() || Auth::user()->checkPermission('shop.destroy'))
+    width = width + 75;
+    @endif
     layui.use(['jquery','element','table'], function(){
         var $ = layui.$;
         var table = layui.table;
@@ -108,7 +123,7 @@
                 ,{field:'status_desc',title:'{{ trans('shop.label.status') }}'}
                 ,{field:'postscript',title:'{{ trans('shop.label.postscript') }}'}
                 //,{field:'created_at',title:'{{ trans('app.created_at') }}'}
-                ,{field:'score',title:'操作', width:150, align: 'right',toolbar:'#barDemo'}
+                ,{field:'score',title:'操作', width:width, align: 'right',toolbar:'#barDemo'}
             ]]
             ,id: 'fb-table'
             ,page: true
