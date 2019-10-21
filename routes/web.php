@@ -23,6 +23,7 @@ Route::group([
     Route::get('password', 'UserController@getPassword');
     Route::post('password', 'UserController@postPassword');
     Route::get('/', 'ResourceController@home')->name('home');
+    Route::get('/home', 'ResourceController@home');
     Route::get('/dashboard', 'ResourceController@dashboard')->name('dashboard');
     Route::resource('banner', 'BannerResourceController');
     Route::post('/banner/destroyAll', 'BannerResourceController@destroyAll');

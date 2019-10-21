@@ -1,7 +1,7 @@
 <div class="main">
     <div class="layui-card fb-minNav">
         <div class="layui-breadcrumb" lay-filter="breadcrumb" style="visibility: visible;">
-            <a href="{{ guard_url('home') }}">主页</a><span lay-separator="">/</span>
+            <a href="{{ route('home') }}">主页</a><span lay-separator="">/</span>
             <a><cite>{{ trans("user.name") }}管理</cite></a>
         </div>
     </div>
