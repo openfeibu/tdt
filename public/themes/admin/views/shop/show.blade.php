@@ -149,45 +149,64 @@
     });
 </script>
 <script>
-    var geocoder,map,markers = [];
+      var geocoder,map,markers = [];
     var init = function() {
         var center = new qq.maps.LatLng("{{$shop['latitude']}}","{{$shop['longitude']}}");
         map = new qq.maps.Map(document.getElementById('map'),{
             center: center,
-            zoom: 15
+            zoom: 18,
+			 mapTypeId: qq.maps.MapTypeId.ROADMAP
         });
-
+		 //创建marker
+    var marker = new qq.maps.Marker({
+        position: center,
+        map: map
+    });
         //调用Poi检索类
         geocoder = new qq.maps.Geocoder({
-
+            
             complete : function(result){
-                console.log(result)
-                map.setCenter(result.detail.location);
-                var marker = new qq.maps.Marker({
-                    map:map,
-                    position: result.detail.location
-                });
-                markers.push(marker)
-                document.getElementsByName('longitude')[0].value = result.detail.location.lng;
-                document.getElementsByName('latitude')[0].value = result.detail.location.lat;
-
-                qq.maps.event.addListener(marker,'click',function(event) {
-                    document.getElementsByName('longitude')[0].value = event.latLng.getLng();
-                    document.getElementsByName('latitude')[0].value = event.latLng.getLat();
-                })
-
-
+				console.log(result)
+				map.setCenter(result.detail.location);
+				
+				
+				document.getElementsByName('longitude')[0].value = result.detail.location.lng;
+				document.getElementsByName('latitude')[0].value = result.detail.location.lat;
+	
+				qq.maps.event.addListener(marker,'click',function(event) {
+					document.getElementsByName('longitude')[0].value = event.latLng.getLng();
+					document.getElementsByName('latitude')[0].value = event.latLng.getLat();
+				})
+                
+               
             },
-            //若服务请求失败，则运行以下函数
-            error: function() {
-                alert("无法获取地址，请检查地址是否正确");
-            }
+			//若服务请求失败，则运行以下函数
+			error: function() {
+				alert("无法获取地址，请检查地址是否正确");
+			}
         });
-        qq.maps.event.addListener(map,'click',function(event) {
+        /*qq.maps.event.addListener(map,'click',function(event) {
             document.getElementsByName('longitude')[0].value = event.latLng.getLng();
             document.getElementsByName('latitude')[0].value = event.latLng.getLat();
             console.log(event)
-        })
+        });*/
+		 qq.maps.event.addListener(marker, 'click', function(event) {
+			document.getElementsByName('longitude')[0].value = event.latLng.getLng();
+            document.getElementsByName('latitude')[0].value = event.latLng.getLat();
+            console.log(event)
+		});
+		qq.maps.event.addListener(map, 'center_changed', function() {
+		            marker.setMap(null);  
+				 marker = new qq.maps.Marker({
+						position: new qq.maps.LatLng(map.getCenter().lat,map.getCenter().lng),
+						map: map
+					});					
+			qq.maps.event.addListener(marker, 'click', function(event) {
+				document.getElementsByName('longitude')[0].value = event.latLng.getLng();
+				document.getElementsByName('latitude')[0].value = event.latLng.getLat();
+				console.log(event)
+			});
+		});
     }
     //清除地图上的marker
     function clearOverlays(overlays) {
@@ -201,11 +220,12 @@
         var keyword = document.getElementById("keyword").value;
         //region = new qq.maps.LatLng(39.936273,116.44004334);
         clearOverlays(markers);
-
+		
         // searchService.setPageCapacity(5);
         geocoder.getLocation(keyword);//根据中心点坐标、半径和关键字进行周边检索。
-
+		
     }
+
 
     layui.use('laydate', function(){
         var laydate = layui.laydate;
