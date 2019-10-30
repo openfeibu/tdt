@@ -101,7 +101,7 @@
                         <div class="layui-input-inline">
                             <input id="keyword" name="address" type="textbox"  class="layui-input" lay-verify="required" value="{{$shop['address']}}">
                             <input type="button" value="搜索" class="layui-button-mapsearch"  onclick="searchKeyword()">
-                            <div class="layui-form-mid layui-word-aux">点击地图快速获取经纬度</div>
+                           <div class="layui-form-mid layui-word-aux" style="color:red !important">注：1，拖动中心点获取经纬度；<br/>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp2，拖动中心点后需要检测冲突门店；<br/>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp3，获取经纬度后，地址手动填写，搜索则不需要。</div>
                         </div>
 
                         <div id="map"></div>
@@ -201,11 +201,8 @@
 						position: new qq.maps.LatLng(map.getCenter().lat,map.getCenter().lng),
 						map: map
 					});					
-			qq.maps.event.addListener(marker, 'click', function(event) {
-				document.getElementsByName('longitude')[0].value = event.latLng.getLng();
-				document.getElementsByName('latitude')[0].value = event.latLng.getLat();
-				console.log(event)
-			});
+			    document.getElementsByName('longitude')[0].value = map.getCenter().lng;
+            document.getElementsByName('latitude')[0].value = map.getCenter().lat;
 		});
     }
     //清除地图上的marker

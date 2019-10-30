@@ -317,25 +317,3 @@ button[data-type="del"]:hover{color:#fff;}
     font-size:14px;
     line-height:40px;
 }
-
-/*新增*/
-.mt20{
-	margin-top:20px;
-}
-.fb-backlog .fb-backlog-body{
-padding:20px ;
-}
-.fb-backlog ul{padding:15px;}
-.fb-backlog li a{background: -webkit-linear-gradient(#00c1de, #13e4c6); /* Safari 5.1 - 6.0 */
-  background: -o-linear-gradient(#00c1de, #13e4c6); /* Opera 11.1 - 12.0 */
-  background: -moz-linear-gradient(#00c1de, #13e4c6); /* Firefox 3.6 - 15 */
-  background: linear-gradient(#00c1de, #13e4c6); /* 标准的语法 */}
-  .fb-backlog-body h3{color:#fff;}
-.fb-backlog-body p cite{	
-	font-weight:bold;
-	color:#fff;
-	font-family:"微软雅黑";
-	font-size:36px;
-}
-
-
