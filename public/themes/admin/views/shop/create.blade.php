@@ -90,10 +90,13 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">经纬度</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="longitude" autocomplete="off" placeholder="" class="layui-input" value="{{$shop['longitude']}}" readonly>
+                            <input type="text" name="longitude" id="longitude" autocomplete="off" placeholder="" class="layui-input" value="{{$shop['longitude']}}" readonly>
                         </div>
                         <div class="layui-input-inline">
-                            <input type="text" name="latitude" autocomplete="off" placeholder="" class="layui-input" value="{{$shop['latitude']}}" readonly>
+                            <input type="text" name="latitude" id="latitude" autocomplete="off" placeholder="" class="layui-input" value="{{$shop['latitude']}}" readonly>
+                        </div>
+                        <div class="layui-input-inline">
+                            <button class="layui-btn layui-inline" type="button" id="check_btn">检测冲突门店</button>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -118,7 +121,7 @@
 
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                            <button class="layui-btn" lay-submit="" lay-filter="demo1" id="submit_btn">立即提交</button>
                         </div>
                     </div>
                     {!!Form::token()!!}
@@ -133,79 +136,71 @@
 <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key={{ config('common.qq_map_key') }}"></script>
 {!! Theme::asset()->container('ueditor')->scripts() !!}
 <script>
+
+</script>
+<script>
     var ue = getUe();
     window.onload = function(){
         init();
     }
-    layui.use('laydate', function() {
-        var laydate = layui.laydate;
-        laydate.render({
-            elem: '#business_time'
-            ,type:'time'
-            ,format:'HH:mm'
-            , range: true
-        });
-    });
-</script>
-<script>
-      var geocoder,map,markers = [];
+    var geocoder,map,markers = [];
     var init = function() {
         var center = new qq.maps.LatLng(23.15641,113.3318);
         map = new qq.maps.Map(document.getElementById('map'),{
             center: center,
             zoom: 18,
-			 mapTypeId: qq.maps.MapTypeId.ROADMAP
+            mapTypeId: qq.maps.MapTypeId.ROADMAP
         });
-		 //创建marker
-    var marker = new qq.maps.Marker({
-        position: center,
-        map: map
-    });
+        //创建marker
+        var marker = new qq.maps.Marker({
+            position: center,
+            map: map
+        });
         //调用Poi检索类
         geocoder = new qq.maps.Geocoder({
-            
+
             complete : function(result){
-				console.log(result)
-				map.setCenter(result.detail.location);
-				
-				
-				document.getElementsByName('longitude')[0].value = result.detail.location.lng;
-				document.getElementsByName('latitude')[0].value = result.detail.location.lat;
-	
-				qq.maps.event.addListener(marker,'click',function(event) {
-					document.getElementsByName('longitude')[0].value = event.latLng.getLng();
-					document.getElementsByName('latitude')[0].value = event.latLng.getLat();
-				})
-                
-               
+                console.log(result)
+                map.setCenter(result.detail.location);
+
+
+                document.getElementsByName('longitude')[0].value = result.detail.location.lng;
+                document.getElementsByName('latitude')[0].value = result.detail.location.lat;
+
+                qq.maps.event.addListener(marker,'click',function(event) {
+                    document.getElementsByName('longitude')[0].value = event.latLng.getLng();
+                    document.getElementsByName('latitude')[0].value = event.latLng.getLat();
+                })
+
+
             },
-			//若服务请求失败，则运行以下函数
-			error: function() {
-				alert("无法获取地址，请检查地址是否正确");
-			}
+            //若服务请求失败，则运行以下函数
+            error: function() {
+                alert("无法获取地址，请检查地址是否正确");
+            }
         });
         /*qq.maps.event.addListener(map,'click',function(event) {
+         document.getElementsByName('longitude')[0].value = event.latLng.getLng();
+         document.getElementsByName('latitude')[0].value = event.latLng.getLat();
+         console.log(event)
+         });*/
+        qq.maps.event.addListener(marker, 'click', function(event) {
             document.getElementsByName('longitude')[0].value = event.latLng.getLng();
             document.getElementsByName('latitude')[0].value = event.latLng.getLat();
             console.log(event)
-        });*/
-		 qq.maps.event.addListener(marker, 'click', function(event) {
-			document.getElementsByName('longitude')[0].value = event.latLng.getLng();
-            document.getElementsByName('latitude')[0].value = event.latLng.getLat();
-            console.log(event)
-		});
-		qq.maps.event.addListener(map, 'center_changed', function() {
-		            marker.setMap(null);  
-				 marker = new qq.maps.Marker({
-						position: new qq.maps.LatLng(map.getCenter().lat,map.getCenter().lng),
-						map: map
-					});					
-			qq.maps.event.addListener(marker, 'click', function(event) {
-				document.getElementsByName('longitude')[0].value = event.latLng.getLng();
-				document.getElementsByName('latitude')[0].value = event.latLng.getLat();
-				console.log(event)
-			});
-		});
+        });
+        qq.maps.event.addListener(map, 'center_changed', function() {
+            marker.setMap(null);
+            marker = new qq.maps.Marker({
+                position: new qq.maps.LatLng(map.getCenter().lat,map.getCenter().lng),
+                map: map
+            });
+            qq.maps.event.addListener(marker, 'click', function(event) {
+                document.getElementsByName('longitude')[0].value = event.latLng.getLng();
+                document.getElementsByName('latitude')[0].value = event.latLng.getLat();
+                console.log(event)
+            });
+        });
     }
     //清除地图上的marker
     function clearOverlays(overlays) {
@@ -219,24 +214,94 @@
         var keyword = document.getElementById("keyword").value;
         //region = new qq.maps.LatLng(39.936273,116.44004334);
         clearOverlays(markers);
-		
+
         // searchService.setPageCapacity(5);
         geocoder.getLocation(keyword);//根据中心点坐标、半径和关键字进行周边检索。
-		
+
     }
 
-      layui.use('laydate', function(){
-          var laydate = layui.laydate;
+    layui.use(['jquery','laydate','form'], function(){
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var $ = layui.$;
 
-          //执行一个laydate实例
-          laydate.render({
-              elem: '#cooperation_date' //指定元素
-              ,type: 'date'
-          });
-          laydate.render({
-              elem: '#contract_date' //指定元素
-              ,type: 'date'
-          });
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#business_time'
+                ,type:'time'
+                ,format:'HH:mm'
+                , range: true
+            });
+        });
 
-      });
+        function check_valid_shop(debug)
+        {
+            var longitude = $("#longitude").val();
+            var latitude = $("#latitude").val();
+            if(!longitude && !debug)
+            {
+                return false;
+            }
+            if(!longitude && debug)
+            {
+                return true;
+            }
+            var url = "{{ guard_url('check_valid_shop') }}"
+            var data = {};
+            data['_token'] = "{!! csrf_token() !!}";
+            data['longitude'] = longitude;
+            data['latitude'] = latitude;
+            var load = layer.load();
+            $.ajax({
+                url : url,
+                data : data,
+                type : 'post',
+                async : false,
+                success : function (data) {
+                    layer.close(load);
+                    if(debug)
+                    {
+                        if(data.code == 400)
+                        {
+                            layer.msg(data.message);
+                            return false;
+                        }
+                    }else{
+                        layer.msg(data.message);
+                        if(data.code == 400)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                error : function (jqXHR, textStatus, errorThrown) {
+                    layer.close(load);
+                    layer.msg('服务器出错');
+                }
+            });
+        }
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#cooperation_date' //指定元素
+            ,type: 'date'
+        });
+        laydate.render({
+            elem: '#contract_date' //指定元素
+            ,type: 'date'
+        });
+
+        $("#check_btn").click(function(){
+            var bool = check_valid_shop(0);
+            console.log(bool);
+            return false;
+        });
+        $("#submit_btn").click(function(){
+            var bool = check_valid_shop(1);
+            console.log(bool);
+            return bool;
+        });
+    });
 </script>

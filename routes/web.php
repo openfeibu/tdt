@@ -78,6 +78,7 @@ Route::group([
     Route::get('shop_export', 'ShopResourceController@export')->name('shop.export');
 
     Route::post('/shop_submit_import', 'ShopResourceController@submitImport')->name('shop.submit_import');
+    Route::post('/check_valid_shop', 'ShopResourceController@checkValidShop')->name('shop.check_valid_shop');
 });
 
 Route::group([

@@ -139,7 +139,21 @@ class ShopResourceController extends BaseController
         try {
             $attributes = $request->all();
             $this->lbs_service->debug = false;
-            $shop = $this->submitShop($attributes);
+            $attributes = $this->handleShopAttributes($attributes);
+            $protection_count = $this->repository->getRangeShopCount($attributes['longitude'],$attributes['latitude'],$attributes['protection_km']);
+            if($protection_count)
+            {
+                return $this->response->message("该区域已存在其他门店")
+                    ->code(400)
+                    ->status('error')
+                    ->url(guard_url('shop/create'))
+                    ->redirect();
+            }
+            $shop = $this->repository->create($attributes);
+            if(isset($attributes['signer']) && $attributes['signer'])
+            {
+                Signer::addSigner($attributes['signer']);
+            }
 
             return $this->response->message(trans('messages.success.created', ['Module' => trans('shop.name')]))
                 ->code(0)
@@ -155,16 +169,7 @@ class ShopResourceController extends BaseController
         }
 
     }
-    public function submitShop($attributes)
-    {
-        $attributes = $this->handleShopAttributes($attributes);
-        $shop = $this->repository->create($attributes);
-        if(isset($attributes['signer']) && $attributes['signer'])
-        {
-            Signer::addSigner($attributes['signer']);
-        }
-        return $shop;
-    }
+
 	public function handleShopAttributes($attributes)
     {
         $map_data = $this->lbs_service->geocode_regeo($attributes['longitude'],$attributes['latitude']);
@@ -186,6 +191,7 @@ class ShopResourceController extends BaseController
             $towncode = '';
             $district_name = '';
             $adcode = '';
+            $city_grade = 'hmt';
         }
         else{
             $adcode = $map_data['result']['ad_info']['adcode'];
@@ -207,8 +213,16 @@ class ShopResourceController extends BaseController
 				$province_code = $city->code;
 				$province_name = $city->name;
 			}
+            if($district->city_grade == 'county-city')
+            {
+                $city_grade = $district->city_grade;
+            }else{
+                $city_grade = $city->city_grade;
+            }
         }
-		
+        $km = setting($city_grade);
+        $km = $km ? $km : setting('default_km');
+
         $attributes['adcode'] = $adcode;
         $attributes['district_name'] = $district_name;
         $attributes['towncode'] = $towncode;
@@ -216,6 +230,7 @@ class ShopResourceController extends BaseController
         $attributes['province_code'] = $province_code;
         $attributes['city_name'] = $city_name;
         $attributes['city_code'] = $city_code;
+        $attributes['protection_km'] = $km;
         return $attributes;
     }
 	public function getAttributesByGeo($map_data,$attributes)
@@ -474,7 +489,7 @@ class ShopResourceController extends BaseController
         try {
             $shop->forceDelete();
             return $this->response->message(trans('messages.success.deleted', ['Module' => trans('shop.name')]))
-                ->code(202)
+                ->code(0)
                 ->status('success')
                 ->url(guard_url('shop'))
                 ->redirect();
@@ -505,7 +520,7 @@ class ShopResourceController extends BaseController
 
             return $this->response->message(trans('messages.success.deleted', ['Module' => trans('shop.name')]))
                 ->status("success")
-                ->code(202)
+                ->code(0)
                 ->url(guard_url('shop'))
                 ->redirect();
 
@@ -517,5 +532,31 @@ class ShopResourceController extends BaseController
                 ->url(guard_url('shop'))
                 ->redirect();
         }
+    }
+    public function checkValidShop(Request $request)
+    {
+        $attributes = $request->all();
+        $this->lbs_service->debug = false;
+        $attributes = $this->handleShopAttributes($attributes);
+        //$attributes['protection_km'] = 1;
+        $protection_shops = $this->repository->getRangeShop($attributes['longitude'],$attributes['latitude'],$attributes['protection_km']);
+        if($protection_shops)
+        {
+            $message = "该区域已存在其他门店：";
+            foreach ($protection_shops as $key => $protection_shop)
+            {
+                $message .= $protection_shop['name'].'；';
+            }
+            return $this->response->message($message)
+                ->code(400)
+                ->status('error')
+                ->url(guard_url('shop/create'))
+                ->redirect();
+        }
+        return $this->response->message("该区域正常")
+            ->code(0)
+            ->status('success')
+            ->url(guard_url('shop/'))
+            ->redirect();
     }
 }
