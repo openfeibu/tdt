@@ -140,11 +140,12 @@ class ShopResourceController extends BaseController
             $attributes = $request->all();
             $this->lbs_service->debug = false;
             $attributes = $this->handleShopAttributes($attributes);
-            $protection_count = $this->repository->getRangeShopCount($attributes['longitude'],$attributes['latitude'],$attributes['protection_km']);
-            if($protection_count)
+            $protection_shops = $this->repository->getRangeShop($attributes['longitude'],$attributes['latitude'],$attributes['protection_km']);
+            if($protection_shops)
             {
                 return $this->response->message("该区域已存在其他门店")
                     ->code(400)
+                    ->data(['shops' => $protection_shops])
                     ->status('error')
                     ->url(guard_url('shop/create'))
                     ->redirect();
@@ -549,6 +550,7 @@ class ShopResourceController extends BaseController
             }
             return $this->response->message($message)
                 ->code(400)
+                ->data(['shops' => $protection_shops])
                 ->status('error')
                 ->url(guard_url('shop/create'))
                 ->redirect();
