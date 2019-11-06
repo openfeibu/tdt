@@ -142,7 +142,7 @@
             });
             var data_id_obj = {};
             var i = 0;
-            var form = $("<form method='post' target='_blank'></form>");
+            var form = $("<form method='post'></form>");
             var input;
             form.attr({"action":url});
             data.forEach(function(v){
