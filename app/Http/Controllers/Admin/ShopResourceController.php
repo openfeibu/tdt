@@ -410,6 +410,7 @@ class ShopResourceController extends BaseController
                     $attributes['latitude'] = $location['lat'];
 					
                     $attributes = $this->handleShopAttributes($attributes);
+                    unset($attributes['protection_km']);
                     $all_shop_attributes[] = $attributes;
 					$signers[] = $attributes['signer'];
                     $success_count++;
