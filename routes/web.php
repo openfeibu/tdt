@@ -75,7 +75,7 @@ Route::group([
     Route::resource('shop', 'ShopResourceController');
     Route::post('/shop/destroyAll', 'ShopResourceController@destroyAll')->name('shop.destroy_all');
     Route::get('shop_import', 'ShopResourceController@import')->name('shop.import');
-    Route::get('shop_export', 'ShopResourceController@export')->name('shop.export');
+    Route::post('shop_export', 'ShopResourceController@export')->name('shop.export');
 
     Route::post('/shop_submit_import', 'ShopResourceController@submitImport')->name('shop.submit_import');
     Route::post('/check_valid_shop', 'ShopResourceController@checkValidShop')->name('shop.check_valid_shop');

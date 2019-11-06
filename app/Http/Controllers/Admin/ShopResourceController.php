@@ -449,10 +449,15 @@ class ShopResourceController extends BaseController
         $handle_fields = $request->input('fields',[]);
         $export_fields = config('model.shop.shop.excel_fields');
         $status = $request->status ?? 'all';
+        $ids = $request->input('ids',[]);
         $shops = $this->repository;
         if($status != 'all')
         {
             $shops = $shops->where('status',$status);
+        }
+        if($ids)
+        {
+            $shops = $shops->whereIn('id',$ids);
         }
         $shops = $this->search($shops,$search);
 

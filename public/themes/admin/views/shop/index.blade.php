@@ -133,19 +133,32 @@
             ,height: 'full-200'
         });
         $(".export-shop").on("click",function(){
-
+            var checkStatus = table.checkStatus('fb-table')
+                    ,data = checkStatus.data;
             var url = "{{ guard_url('shop_export') }}?_token={!! csrf_token() !!}"
             $(".search_key").each(function(){
                 var name = $(this).attr('name');
                 url += "&search["+name+"]="+$(this).val();
             });
-
+            var data_id_obj = {};
+            var i = 0;
+            var form = $("<form method='post' target='_blank'></form>");
+            var input;
+            form.attr({"action":url});
+            data.forEach(function(v){
+                data_id_obj[i] = v.id; i++
+                // url += '&ids[]='+v.id;
+                input = $("<input type='hidden'>");
+                input.attr({"name":"ids[]"});
+                input.val(v.id);
+                form.append(input);
+            });
             var load =layer.load();
-            window.location.href = url;
 
-            console.log(url);
+            $(document.body).append(form);
+            form.submit();
+
             layer.close(load);
-
 
         })
     });
